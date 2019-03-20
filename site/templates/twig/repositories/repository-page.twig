@@ -1,0 +1,54 @@
+<p>{{repository.summary|raw}}</p>
+<div class="card">
+	<div class="card-header bg-gray">
+		<div class="row">
+			<div class="col">
+
+			</div>
+			<div class="col">
+				<span class="pull-right">
+					{% set days = (("now"|date("z") - repository.lastcommit.date|date("z"))|abs) %}
+					<span class="text-secondary">Last {{ days_commit_text(days, repository.lastcommit.date) }}</span>
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<div class="mb-3">
+			<h3>Repository Links</h3>
+			<div class="list-group">
+				{% for child in children %}
+					<a href="{{ child.url }}" class="list-group-item list-group-item-action">
+						{{ child.title }}
+					</a>
+				{% endfor %}
+			</div>
+		</div>
+		<div>
+			<h3>Metadata</h3>
+			<table class="table table-condensed">
+				<tr>
+					<th>Owner</th>
+					<th>Repository</th>
+					<th></th>
+				</tr>
+				<tr>
+					<td>{{ repository.owner }}</td>
+					<td>{{ repository.name }}</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="card-footer">
+		<div class="row">
+			<div class="col-sm-6">
+
+			</div>
+			<div class="col-sm-6 text-right">
+
+			</div>
+		</div>
+	</div>
+</div>

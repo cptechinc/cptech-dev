@@ -1,0 +1,7 @@
+<div class="list-group">
+    {% for child in children %}
+        <a href="{{ child.url }}" class="list-group-item list-group-item-action">
+            {{ child.title }}
+        </a>
+    {% endfor %}
+</div>

@@ -1,0 +1,73 @@
+<div>
+	<a href="{{ customer.parent.url }}" class="btn btn-dark mb-3"><i class="fa fa-arrow-circle-left"></i>&ensp;Back to Customer List</a>
+	<div class="card">
+		<div class="card-header bg-gray">
+			<div class="row">
+				<div class="col">
+				</div>
+				<div class="col">
+					<span class="pull-right">
+						{% if (customer.has_latestcommit()) %}
+							<span class="text-success">
+								<i class="fa fa-check-square-o" aria-hidden="true"></i>
+								Up To Date
+							</span>
+						{% else %}
+							<span class="text-danger">
+								<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+								Last Commit: {{ customer.lastcommit.shortsha }}
+							</span>
+						{% endif %}
+					</span>
+				</div>
+			</div>
+		</div>
+		{% if customer.backlogcount > 0 %}
+			<div class="card-header bg-warning">
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+				{{ customer.title }} is {{ customer.backlogcount }} commit {{ customer.backlogcount > 1 ? 's' : '' }} behind
+			</div>
+		{% endif %}
+		<div class="card-body">
+			<div>
+				<div class="mb-2">
+					<h3>Customer Repository</h3>
+					<p>
+						{{ customer.repo }}
+					</p>
+				</div>
+
+				<div class="mb-2">
+					<h3>Project Customer Code</h3>
+					<p>
+						{{ customer.code }}
+					</p>
+				</div>
+
+				<div class="mb-2">
+					<h3>Customer Notes</h3>
+					<p>
+						{{ customer.note }}
+					</p>
+				</div>
+
+				<div class="mb-2">
+					<h3>Last Commit Applied</h3>
+					<p>
+						{{ customer.lastcommit.sha }} <a href="{{ customer.lastcommit.url }}">View Commit</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="card-footer">
+			<div class="row">
+				<div class="col-sm-6">
+
+				</div>
+				<div class="col-sm-6 text-right">
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

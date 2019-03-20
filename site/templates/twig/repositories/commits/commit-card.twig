@@ -1,0 +1,106 @@
+<div>
+    <a href="{{ commit.parent.url }}" class="btn btn-dark mb-3"><i class="fa fa-arrow-circle-left"></i>&ensp;Back to Commit List</a>
+    <div class="card">
+        <div class="card-header bg-gray">
+            <div class="row">
+                <div class="col">
+                    <h3>{{ commit.name }}</h3>
+                    {% set days = (("now"|date("z") - commit.date|date("z"))|abs) %}
+                    <span class="text-secondary">{{ days_commit_text(days, commit.date) }}</span>
+                </div>
+                <div class="col">
+                    <span class="pull-right">
+                        {% if commit.is_merge %}
+                            <h2><span class="badge badge-warning p-2">Merge</span></h2>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <nav class="mb-4">
+                <div class="nav nav-tabs h4" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">Information</a>
+                    <a class="nav-item nav-link" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="false">Files</a>
+                </div>
+            </nav>
+            <div class="tab-content p-3" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+                    <div class="mb-4">
+                        <span class="h3">
+                            Merge?
+                            &nbsp;
+                            {% if commit.is_merge %}
+                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                            {% else %}
+                                <i class="fa fa-square-o" aria-hidden="true"></i>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <hr>
+
+                    <h3>Commit Message</h3>
+                    <pre>
+                        <code>{{ commit.body|raw }}</code>
+                    </pre>
+
+                    <h3>Commit Notes</h3>
+                    <pre>
+                        <code>{{ commit.note|raw }}</code>
+                    </pre>
+
+                    <div class="mb-5">
+                        <h3>Customer Repos that have applied commit</h3>
+                        <div class="form-group">
+                            <div class="row">
+                                {% for customer in customers %}
+                                    <div class="col">
+                                        {% include 'repositories/commits/commit-checkbox-form.twig' %}
+                                        <br>
+                                        {{ customer.title }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    {% set fetchstring = "git fetch " ~ github_repo.getCloneUrl() ~ " " ~ branch ~ " && git cherry-pick " ~ commit.name  ~ " -e -x" %}
+                    <h3>Git Fetch {{ (commit.is_merge) ? 'Merge' : '' }}</h3>
+                    <p class="card-text">{{ fetchstring }}{{ (commit.is_merge) ? ' -m 1 ' : '' }}</p>
+
+					<h4>Cherry Pick Signature</h4>
+					{{ repository.owner ~ "/" ~ repository.name ~ "@" }}
+                </div>
+                <div class="tab-pane fade" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                    <h3 class="mb-3">Files Affected</h3>
+                    <ul class="files-list">
+                        {% for file in github_commit.getFiles() %}
+                            <li>{{ file.getFilename() }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+		<div class="card-footer">
+			<div class="row">
+				<div class="col-sm-6">
+					{% if (commit.prev("sort=+date")) %}
+						<a href="{{commit.prev("sort=+date").url}}">
+							Previous Commit <br>
+							<i class="fa fa-long-arrow-left fa-2x" aria-hidden="true"></i>
+						</a>
+					{% endif %}
+				</div>
+				<div class="col-sm-6 text-right">
+					{% if (commit.next("sort=+date").id and commit.next("sort=+date").id != commit.id) %}
+						<a href="{{commit.next("sort=+date").url}}">
+							Next Commit <br>
+							<i class="fa fa-long-arrow-right fa-2x" aria-hidden="true"></i>
+						</a>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+    </div>
+</div>

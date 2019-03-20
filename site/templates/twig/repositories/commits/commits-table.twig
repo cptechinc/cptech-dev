@@ -1,0 +1,56 @@
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>Commit</th>
+                <th class="col-sm-4">ProcessWire / DB</th>
+
+                {% for customer in customers %}
+                    <th>{{ customer.title }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% for commit in commits %}
+            <tr>
+                <td>
+                    <a href="{{commit.url}}">
+                        {{ commit.name|slice(0, 7) }}
+                    </a>
+                    <span>
+                        {% if commit.is_merge %}
+                            <span class="badge badge-warning p-2">Merge</span>
+                        {% endif %}
+                    </span>
+                    <br>
+                    {% set days = (("now"|date("z") - commit.date|date("z"))|abs) %}
+                    <span class="text-secondary">{{ days_commit_text(days, commit.date) }}</span>
+                    <br>
+                    {{ commit.body|striptags}}
+                    <br>
+
+                </td>
+                <td>
+                    <form action="{{ commit.url }}" method="POST" id="{{ commit.name }}-note">
+                        <input type="hidden" name="action" value="save-note">
+                        <div class="placard" data-initialize="placard">
+                            <div class="placard-popup"></div>
+                            <textarea name="note" rows="2" class="form-control placard-field">
+                                {{ commit.note|trim }}
+                            </textarea>
+                            <div class="placard-footer">
+                                <a class="placard-cancel" href="#">Cancel</a>
+                                <button class="btn btn-primary btn-xs placard-accept" type="button">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+
+                {% for customer in customers %}
+                    <td>
+                        {% include 'repositories/commits/commit-checkbox-form.twig' %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+</div>
