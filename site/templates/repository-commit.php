@@ -45,12 +45,12 @@
 		// Set up GitHub client, Get Github Repo and Commit
 		$github = new GitHubClient();
 		$github->setCredentials($config->github_login, $config->github_login_password);
-		$branch = $input->get->branch ? $input->get->text('branch') : 'master';
+
 		// Instance of GitHubFullCommit
 		$github_commit = $github->repos->commits->getSingleCommit($repository->owner, $repository->name, $commit->name);
-		$github_repo = $github->repos->get($repository->owner, $repository->name);
+
 		include($config->paths->templates."/twig/repositories/commits/functions.php");
-		$page->body =  $config->twig->render('repositories/commits/commit-card.twig', ['repository' => $repository, 'commit' => $commit, 'customers' => $customers, 'branch' => $branch, 'github_commit' => $github_commit, 'github_repo' => $github_repo]);
+		$page->body =  $config->twig->render('repositories/commits/commit-card.twig', ['repository' => $repository, 'commit' => $commit, 'customers' => $customers,  'github_commit' => $github_commit]);
 		$config->scripts->append(get_hashedtemplatefileurl('scripts/pages/commit.js'));
 		include __DIR__ . "/basic-page.php";
 	}

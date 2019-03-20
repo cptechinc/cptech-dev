@@ -1,8 +1,8 @@
 $(document).ready(function() {
-	
+
 	$('body').popover({selector: '[data-toggle="popover"]', placement: 'top'});
 	$('body').tooltip({selector: '[data-toggle="tooltip"]', placement: 'top'});
-	
+
 	$('body').on('click', function (e) {
 		$('[data-toggle="popover"]').each(function () {
 			//the 'is' for buttons that trigger popups
@@ -12,7 +12,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-	
+
 	/*==============================================================
 		PAGE SCROLLING FUNCTIONS
 	=============================================================*/
@@ -31,7 +31,7 @@ $(document).ready(function() {
 function preview_tableformatter(formatterform) {
 	var form = $(formatterform);
 	form.find('[name=action]').val('preview');
-	
+
 	form.postform({jsoncallback: true}, function(json) {
 		$.notify({
 			icon: json.response.icon,
@@ -78,13 +78,13 @@ function postnotify(form) {
 		var icon = 'fa fa-floppy-o fa-2x';
 		var type = 'success';
 		var title = "Success!";
-	
+
 		if (json.error) {
 			title = "Error!";
 			icon = 'fa fa-exclamation-triangle fa-2x';
 			type = 'danger';
 		}
-	
+
 		$.notify({
 			title: title,
 			icon: icon,
