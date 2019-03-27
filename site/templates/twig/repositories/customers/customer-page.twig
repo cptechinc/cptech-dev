@@ -7,16 +7,20 @@
 				</div>
 				<div class="col">
 					<span class="pull-right">
-						{% if (customer.has_latestcommit()) %}
-							<span class="text-success">
-								<i class="fa fa-check-square-o" aria-hidden="true"></i>
-								Up To Date
-							</span>
+						{% if (customer.has_commits()) %}
+							{% if (customer.has_latestcommit()) %}
+								<span class="text-success">
+									<i class="fa fa-check-square-o" aria-hidden="true"></i>
+									Up To Date
+								</span>
+							{% else %}
+								<span class="text-danger">
+									<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+									Last Commit: {{ customer.lastcommit.shortsha }}
+								</span>
+							{% endif %}
 						{% else %}
-							<span class="text-danger">
-								<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-								Last Commit: {{ customer.lastcommit.shortsha }}
-							</span>
+							No Commit History Available
 						{% endif %}
 					</span>
 				</div>
@@ -25,36 +29,40 @@
 		{% if customer.backlogcount > 0 %}
 			<div class="card-header bg-warning">
 				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-				{{ customer.title }} is {{ customer.backlogcount }} commit {{ customer.backlogcount > 1 ? 's' : '' }} behind
+				{{ customer.title }} is {{ customer.backlogcount }} {{ 'commit' ~ (customer.backlogcount > 1 ? 's' : '') }} behind
 			</div>
 		{% endif %}
 		<div class="card-body">
 			<div>
-				<div class="mb-2">
-					<h3>Customer Repository</h3>
+				<div class="mb-3">
+					<h3><i class="fa fa-book" aria-hidden="true"></i> Customer Repository</h3>
 					<p>
 						{{ customer.repo }}
 					</p>
 				</div>
 
-				<div class="mb-2">
-					<h3>Project Customer Code</h3>
+				<div class="mb-3">
+					<h3> <i class="fa fa-id-card" aria-hidden="true"></i> Project Customer Code</h3>
 					<p>
 						{{ customer.code }}
 					</p>
 				</div>
 
-				<div class="mb-2">
-					<h3>Customer Notes</h3>
+				<div class="mb-3">
+					<h3><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Customer Notes</h3>
 					<p>
 						{{ customer.note }}
 					</p>
 				</div>
 
-				<div class="mb-2">
-					<h3>Last Commit Applied</h3>
+				<div class="mb-3">
+					<h3><i class="fa fa-github" aria-hidden="true"></i> Last Commit Applied</h3>
 					<p>
-						{{ customer.lastcommit.sha }} <a href="{{ customer.lastcommit.url }}">View Commit</a>
+						{% if (customer.has_commits()) %}
+							{{ customer.lastcommit.sha }} <a href="{{ customer.lastcommit.url }}">View Commit</a>
+						{% else %}
+							N/A
+						{% endif %}
 					</p>
 				</div>
 			</div>
