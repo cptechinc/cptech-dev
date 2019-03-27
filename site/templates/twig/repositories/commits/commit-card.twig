@@ -30,39 +30,40 @@
 			<div class="tab-content p-3" id="nav-tabContent">
 				<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
 					<div class="mb-4">
-						<h3>SHA</h3>
+						<h3><i class="fa fa-github" aria-hidden="true"></i> SHA</h3>
 						{{ commit.name }}
 					</div>
 
-					<div class="mb-2">
-						<h3>Commit Message</h3>
+					<div class="mb-3">
+						<h3><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Commit Message</h3>
 						<div class="bg-light p-2">
 							<pre>{{ commit.body|raw }}</pre>
 						</div>
-
 					</div>
 
-					<div class="mb-2">
-						<h3>Commit Notes</h3>
+					<div class="mb-3">
+						<h3><i class="fa fa-commenting-o" aria-hidden="true"></i> Commit Notes</h3>
 						{% include 'repositories/commits/commit-note-form.twig' %}
 					</div>
 
 					<div class="mb-5">
-						<h3>Customer Repos that have applied commit</h3>
-						<div class="form-group">
-							<div class="row">
-								{% for customer in customers %}
-									<div class="col">
-										{% include 'repositories/commits/commit-checkbox-form.twig' %}
-										<br>
-										{{ customer.title }}
-									</div>
-								{% endfor %}
-							</div>
+						<h3><i class="fa fa-users" aria-hidden="true"></i> Customer Repos that have applied commit</h3>
+						{% set customerarray = customers.getArray()|batch(4, '') %}
+						<div class="row">
+							{% for customercolumn in customerarray %}
+								<div class="col-sm-3">
+									{% for customer in customercolumn if customer.title %}
+										<div class="col">
+											{% include 'repositories/commits/commit-checkbox-form.twig' %}
+											&nbsp; &nbsp;
+											{{ customer.title }} <a href="{{ customer.url }}" aria-label="{{ customer.title }} Link"><i class="fa fa-link" aria-hidden="true"></i></a>
+										</div>
+									{% endfor %}
+								</div>
+							{% endfor %}
 						</div>
 					</div>
 					<hr>
-
 				</div>
 				<div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
 					<h3 class="mb-4">Files Affected</h3>

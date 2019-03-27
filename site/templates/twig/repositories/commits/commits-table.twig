@@ -3,7 +3,8 @@
         <thead>
             <tr>
                 <th>Commit</th>
-                <th class="col-sm-4">ProcessWire / DB</th>
+                <th class="col-sm-4"><abbr data-toggle="tooltip" title="ProcessWire / DB">Project</abbr> Notes</th>
+				<th>Applied Customers</th>
             </tr>
         </thead>
         {% for commit in commits %}
@@ -14,7 +15,7 @@
                     </a>
                     <span>
                         {% if commit.is_merge %}
-                            <span class="badge badge-warning p-2">Merge</span>
+                            <span class="badge badge-warning p-2"><i class="fa fa-code-fork" aria-hidden="true"></i> Merge</span>
                         {% endif %}
                     </span>
                     <br>
@@ -25,8 +26,13 @@
                     <br>
                 </td>
                 <td>
-                    {% include 'repositories/commits/commit-note-form.twig' %}
+                    {{ commit.note|trim }}
                 </td>
+				<td>
+					<button type="button" class="btn btn-info" data-toggle="tooltip" data-html="true" title="{{ commit.commit_customers is empty ? 'N/A' : commit.commit_customers.explode('title')|join(', <br>') }}">
+						Customers
+					</button>
+				</td>
             </tr>
         {% endfor %}
     </table>
