@@ -24,19 +24,25 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="<?= $pages->get('/')->url; ?>"><?= $pages->get('/')->title; ?></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-					<li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="<?= $pages->get('/tools/')->url; ?>" id="<?= $pages->get('/tools/')->name; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $pages->get('/tools/')->title; ?></a>
-                        <div class="dropdown-menu" aria-labelledby="<?= $pages->get('/tools/')->name; ?>">
-							<?php foreach ($pages->get('/tools/')->children() as $child) : ?>
-								<a class="dropdown-item" href="<?= $child->url; ?>"><?= $child->title; ?></a>
-							<?php endforeach; ?>
-                        </div>
-                    </li>
+					<?php foreach ($pages->get('/')->children() as $child) : ?>
+						<?php if ($child->hasChildren()) : ?>
+							<li class="nav-item dropdown">
+		                        <a class="nav-link dropdown-toggle" href="<?= $child->url; ?>" id="<?= $child->name; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $child->title; ?></a>
+		                        <div class="dropdown-menu" aria-labelledby="<?= $child->name; ?>">
+									<?php foreach ($child->children() as $childpage) : ?>
+										<a class="dropdown-item" href="<?= $childpage->url; ?>"><?= $childpage->title; ?></a>
+									<?php endforeach; ?>
+		                        </div>
+		                    </li>
+						<?php else : ?>
+							<li class="nav-item active">
+		                        <a class="nav-link" href="<?= $child->url; ?>"><?= $child->title; ?></a>
+		                    </li>
+						<?php endif; ?>
+					<?php endforeach; ?>
+
                 </ul>
-                
+
                 <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" placeholder="Search" aria-label="Search" type="text">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
