@@ -16,4 +16,7 @@
         </div>
     </div>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    {% if input.get.text('after') or input.get.text('before') is not empty %}
+        <a href="{{ page.url }}" class="btn btn-danger mt-3">Clear Search</a>
+    {% endif %}
 </form>
