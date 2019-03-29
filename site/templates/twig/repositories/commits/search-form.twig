@@ -1,0 +1,19 @@
+<h3>Search Commits</h4>
+<hr>
+<form action="{{ page.url }}" method="get" class="mt-3 mb-5">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="beforecommit">Before Commit</label>
+                <input type="text" class="form-control" name="before" placeholder="Enter commit ID">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="aftercommit">After Commit</label>
+                <input type="text" class="form-control" name="after" placeholder="Enter commit ID">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+</form>
