@@ -46,23 +46,26 @@
 						{% include 'repositories/commits/commit-note-form.twig' %}
 					</div>
 
-					<div class="mb-5">
-						<h3><i class="fa fa-users" aria-hidden="true"></i> Customer Repos that have applied commit</h3>
-						{% set customerarray = customers.getArray()|batch(4, '') %}
-						<div class="row">
-							{% for customercolumn in customerarray %}
-								<div class="col-sm-3">
-									{% for customer in customercolumn if customer.title %}
-										<div class="col">
-											{% include 'repositories/commits/commit-checkbox-form.twig' %}
-											&nbsp; &nbsp;
-											{{ customer.title }} <a href="{{ customer.url }}" aria-label="{{ customer.title }} Link"><i class="fa fa-link" aria-hidden="true"></i></a>
-										</div>
-									{% endfor %}
-								</div>
-							{% endfor %}
+					{% if user.role('project-admin') %}
+						<div class="mb-5">
+							<h3><i class="fa fa-users" aria-hidden="true"></i> Customer Repos that have applied commit</h3>
+							{% set customerarray = customers.getArray()|batch(4, '') %}
+							<div class="row">
+								{% for customercolumn in customerarray %}
+									<div class="col-sm-3">
+										{% for customer in customercolumn if customer.title %}
+											<div class="col">
+												{% include 'repositories/commits/commit-checkbox-form.twig' %}
+												&nbsp; &nbsp;
+												{{ customer.title }} <a href="{{ customer.url }}" aria-label="{{ customer.title }} Link"><i class="fa fa-link" aria-hidden="true"></i></a>
+											</div>
+										{% endfor %}
+									</div>
+								{% endfor %}
+							</div>
 						</div>
-					</div>
+					{% endif %}
+					
 					<hr>
 				</div>
 				<div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
