@@ -2,16 +2,32 @@
 <hr>
 <form action="{{ page.url }}" method="get" class="mt-3 mb-5">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label for="beforecommit">Before Commit</label>
                 <input type="text" class="form-control" name="before" placeholder="Enter commit ID">
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label for="aftercommit">After Commit</label>
                 <input type="text" class="form-control" name="after" placeholder="Enter commit ID">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="aftercommit">From Date</label>
+                {% set name = 'order_date[]' %}
+                {% set value = salesordershistorydisplay.get_filtervalue('order_date') %}
+                {% include 'common/date-picker.twig' %}
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="aftercommit">Through Date</label>
+                {% set name = 'order_date[]' %}
+                {% set value = salesordershistorydisplay.get_filtervalue('order_date', 1) %}
+                {% include 'common/date-picker.twig' %}
             </div>
         </div>
     </div>
