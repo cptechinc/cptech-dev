@@ -2,22 +2,37 @@
 	<a href="{{ customer.parent.url }}" class="btn btn-dark mb-3"><i class="fa fa-arrow-circle-left"></i>&ensp;Back to Customer List</a>
 	<div class="card">
 		<div class="card-body">
-			<form action="" method="">
-				<div class="mb-3">
-					<h3><i class="fa fa-book" aria-hidden="true"></i> Customer Repository</h3>
-					<input type="text">
+			<form action="{{ page.url }}" method="post">
+				<div class="form-group">
+					<label for="">Customer Title</label>
+					<input type="text" class="form-control" name="custtitle" placeholder="Enter customer title">
 				</div>
-
-				<div class="mb-3">
-					<h3> <i class="fa fa-id-card" aria-hidden="true"></i> Project Customer Code</h3>
-					<input type="text">
+				<div class="form-group">
+					<label for="">Customer Repository</label>
+					<input type="text" class="form-control" name="custrepo" placeholder="Enter customer repository">
 				</div>
-
-				<div class="mb-3">
-					<h3><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Customer Notes</h3>
-					<textarea name="" id="" cols="30" rows="10"></textarea>
+				<div class="form-group">
+					<label for="">Customer Project Code</label>
+					<input type="text" class="form-control" name="custcode" placeholder="Enter customer code">
 				</div>
-                <a href="" class="btn btn-dark">Save</a>
+				<div class="form-group">
+					<label for="">Customer Notes</label>
+					<textarea class="form-control" row="2" name="custnote" placeholder="Enter customer note"></textarea>
+				</div>
+				{% if inputpost %}
+					{% if success %}
+						<div class="alert alert-success" role="alert">
+							<h4 class="alert-heading">Success</h4>
+							<p>{{ custtitle }} was added</p>
+						</div>
+					{% else %}
+						<div class="alert alert-danger" role="alert">
+							<h4 class="alert-heading">Error!</h4>
+							<p>{{ custtitle }} was not added</p>
+						</div>
+					{% endif %}
+				{% endif %}
+				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
 		</div>
 	</div>
