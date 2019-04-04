@@ -7,7 +7,7 @@
 		</div>
 		<div class="container page">
 			<div class="list-group">
-				<?php foreach ($page->children('template!=sitemap, name!=about') as $child) : ?>
+				<?php foreach ($page->children('template!=sitemap|login|logout, name!=about') as $child) : ?>
 					<a href="<?= $child->url; ?>" class="list-group-item list-group-item-action"><?= $child->title; ?></a>
 				<?php endforeach; ?>
 			</div>

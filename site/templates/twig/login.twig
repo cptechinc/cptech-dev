@@ -1,5 +1,5 @@
 <div class="container page col-sm-3 mx-auto" id="login-container">
-	<form method="POST" action="" class="form-signin text-center">
+	<form method="POST" action="{{ page.url }}" class="form-signin text-center">
 		<input type="hidden" name="action" value="login">
 		<h1>CP Tech Dev</h1>
 		{% if user.loggedin %}
@@ -11,6 +11,8 @@
 			{% else %}
 				<br>
 			{% endif %}
+		{% else %}
+
 		{% endif %}
 		<div class="form-group">
 			<label for="inputUsername" class="sr-only">Username</label>
@@ -22,6 +24,6 @@
 		</div>
 
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-		<p class="mt-5 mb-3 text-muted">{{ site.company_name }} &copy; {{ date }}</p>
+		<p class="mt-4 mb-3 text-muted">CP Tech &copy; {{ date }}</p>
 	</form>
 </div>
