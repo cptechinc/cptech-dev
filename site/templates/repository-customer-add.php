@@ -25,7 +25,7 @@
 
     $inputpost = $input->requestMethod('POST');
 
-    $page->body = $config->twig->render('repositories/customers/customer-add.twig', ['page' => $page, 'customer' => $page, 'commits' => $commits, 'inputpost' => $inputpost, 'success' => $success, 'errormsg' => $errormsg, 'custtitle' => $custtitle]);
+    $page->body = $config->twig->render('repositories/customers/customer-add.twig', ['customer' => $page, 'commits' => $commits, 'inputpost' => $inputpost, 'success' => $success, 'errormsg' => $errormsg, 'custtitle' => $custtitle]);
     $config->scripts->append(get_hashedtemplatefileurl('scripts/pages/repository.js'));
 
     include __DIR__ . "/basic-page.php";

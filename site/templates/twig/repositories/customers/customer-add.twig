@@ -2,12 +2,13 @@
 	<a href="{{ customer.parent.url }}" class="btn btn-dark mb-3"><i class="fa fa-arrow-circle-left"></i>&ensp;Back to Customer List</a>
 	<div class="card">
 		<div class="card-body">
-			<form action="{{ page.url }}" method="post">
+			<form action="{{ customer.url }}" method="post">
 				{% if inputpost %}
 					{% if success %}
 						<div class="alert alert-success" role="alert">
 							<h4 class="alert-heading">Success</h4>
 							<p>{{ custtitle }} was added</p>
+							<a href="{{ customer.parent.child('title=' ~ custtitle).url }}" class="btn btn-dark"><i class="fa fa-arrow-circle-right"></i>&ensp;Go to Customer Page</a>
 						</div>
 					{% else %}
 						<div class="alert alert-danger" role="alert">
