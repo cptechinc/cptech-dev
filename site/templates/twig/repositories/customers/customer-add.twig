@@ -3,6 +3,23 @@
 	<div class="card">
 		<div class="card-body">
 			<form action="{{ page.url }}" method="post">
+				{% if inputpost %}
+					{% if success %}
+						<div class="alert alert-success" role="alert">
+							<h4 class="alert-heading">Success</h4>
+							<p>{{ custtitle }} was added</p>
+						</div>
+					{% else %}
+						<div class="alert alert-danger" role="alert">
+							<h4 class="alert-heading">Error!</h4>
+							{% if errormsg %}
+								<p>{{ errormsg }}</p>
+							{% else %}
+								<p>{{ custtitle }} was not added</p>
+							{% endif %}
+						</div>
+					{% endif %}
+				{% endif %}
 				<div class="form-group">
 					<label for="">Customer Title</label>
 					<input type="text" class="form-control" name="custtitle" placeholder="Enter customer title">
@@ -19,19 +36,6 @@
 					<label for="">Customer Notes</label>
 					<textarea class="form-control" row="2" name="custnote" placeholder="Enter customer note"></textarea>
 				</div>
-				{% if inputpost %}
-					{% if success %}
-						<div class="alert alert-success" role="alert">
-							<h4 class="alert-heading">Success</h4>
-							<p>{{ custtitle }} was added</p>
-						</div>
-					{% else %}
-						<div class="alert alert-danger" role="alert">
-							<h4 class="alert-heading">Error!</h4>
-							<p>{{ custtitle }} was not added</p>
-						</div>
-					{% endif %}
-				{% endif %}
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
 		</div>
