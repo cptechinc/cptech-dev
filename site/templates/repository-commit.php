@@ -40,7 +40,7 @@
 		$page->title = "Commit $page->shortsha";
 		$commit = $page;
 		$repository = $commit->parent('template=repository'); // Goes up 2 levels
-		$customers = $repository->child('name=customers')->children();
+		$customers = $repository->child('name=customers')->children('template=repository-customer');
 
 		// Set up GitHub client, Get Github Repo and Commit
 		$github = new GitHubClient();
