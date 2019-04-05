@@ -1,0 +1,157 @@
+<?php
+	class GitHubRepositories extends WireData implements Module {
+		private $name = "GitHubRepositories";
+		private $template_repo        = 'repository';
+		private $template_customer    = 'repository-customer';
+		private $template_commit_list = 'repository-commits';
+		private $template_commit      = 'repository-commit';
+
+		private $selector_commit_sequential = 'sort=date';
+
+		private $module_github = 'GitHubConnector';
+
+		public static function getModuleInfo() {
+			return array(
+				'title' => 'GitHub Repositories Extension',
+				'version' => 102,
+				'summary' => 'Extends templates for GitHub Properties',
+				'singular' => true,
+				'autoload' => true,
+			);
+		}
+
+		public function init() {
+			$this->add_hooks();
+		}
+
+		/**
+		 * Properties are protected from modification without function, but
+		 * We want to allow the property values to be accessed
+		 * @param  string $property The property trying to be accessed
+		 * @return mixed		   Property value or Error
+		 */
+		 public function __get($property) {
+			if (property_exists($this, $property)) {
+				return $this->$property;
+			} else {
+				$this->error("This property ($property) does not exist");
+				return false;
+			}
+		}
+
+		protected function add_hooks() {
+			$this->add_template_repo_hooks();
+			$this->add_template_commit_list_hooks();
+			$this->add_template_commit_hooks();
+			$this->add_template_customer_hooks();
+		}
+
+		public function add_template_repo_hooks() {
+			$this->addHookProperty("Page(template=$this->template_repo)::lastcommit", function($event) {
+				$repo = $event->object;
+				$event->return = $this->get_lastcommit_repository($repo);
+			});
+
+			$this->addHookProperty("Page(template=$this->template_repo)::repocode", function($event) {
+				$repo = $event->object;
+				$event->return = "$repo->owner/$repo->name";
+			});
+		}
+
+		public function add_template_commit_list_hooks() {
+			$this->addHookProperty("Page(template=$this->template_commit_list)::lastcommit", function($event) {
+				$commits = $event->object;
+				$event->return = $commits->find($this->selector_commit_sequential)->last();
+			});
+		}
+
+		public function add_template_customer_hooks() {
+			$this->addHookProperty("Page(template=$this->template_customer)::lastcommit", function($event) {
+				$customer = $event->object;
+				$event->return = $this->get_lastcommit_customer($customer);
+			});
+
+			$this->addHook("Page(template=$this->template_customer)::has_latestcommit", function($event) {
+				$customer = $event->object;
+				$event->return = $this->has_latestcommit($customer);
+			});
+
+			$this->addHook("Page(template=$this->template_customer)::has_commits", function($event) {
+				$customer = $event->object;
+				$event->return = $this->has_commits_customer($customer);
+			});
+
+			$this->addHook("Page(template=$this->template_customer)::backlogcount", function($event) {
+				$customer = $event->object;
+				$event->return = $this->count_commitbacklog($customer);
+			});
+
+			$this->addHookProperty("Page(template=$this->template_customer)::repocode", function($event) {
+				$customer = $event->object;
+				$repo = $customer->parent("template=$this->template_repo");
+				$event->return = "$repo->owner/$customer->repo";
+			});
+		}
+
+		public function add_template_commit_hooks() {
+			$this->addHookProperty("Page(template=$this->template_commit)::sha", function($event) {
+				$commit = $event->object;
+				$event->return = $commit->name;
+			});
+
+			$this->addHookProperty("Page(template=$this->template_commit)::shortsha", function($event) {
+				$commit = $event->object;
+				$event->return = substr($commit->name, 0, 7);
+			});
+
+			$this->addHook("Page(template=$this->template_commit)::get_cherrypicksignature", function($event) {
+				$commit = $event->object;
+				$add_sha = $event->arguments(0); // boolean for if we should add commit sha
+				$repo = $commit->parent("template=$this->template_repo");
+				$signature = "$repo->repocode@";
+				$signature .= $add_sha ? $commit->sha : '';
+				$event->return = $signature;
+			});
+
+			// GITHUB REPO HOOKS
+			$this->addHook("Page(template=$this->template_commit)::get_fetchstatement", function($event) {
+				$commit = $event->object;
+				$github = $this->wire('modules')->get($this->module_github);
+				$event->return = $github->get_commit_fetchstatement($commit);
+			});
+		}
+
+		public function has_latestcommit(Page $customer) {
+			$repo = $customer->parent("template=$this->template_repo");
+			$last_commit_repo = $this->get_lastcommit_repository($repo);
+			$last_commit_customer = $this->get_lastcommit_customer($customer);
+			return $last_commit_repo->id == $last_commit_customer->id;
+		}
+
+		public function has_commits_customer(Page $customer) {
+			$commits = $customer->parent("template=$this->template_repo")->child("template=$this->template_commit_list");
+			return boolval($commits->hasChildren("$this->selector_commit_sequential, commit_customers=$customer->name"));
+		}
+
+		public function count_commitbacklog(Page $customer) {
+			$repo = $customer->parent("template=$this->template_repo");
+			$last_commit_repo = $this->get_lastcommit_repository($repo);
+
+			if ($this->has_commits_customer($customer)) {
+				$last_commit_customer = $this->get_lastcommit_customer($customer);
+				return abs($last_commit_repo->index() - $last_commit_customer->index());
+			} else {
+				return abs($last_commit_repo->index() - $repo->child("template=$this->template_commit_list")->hasChildren());
+			}
+		}
+
+		public function get_lastcommit_repository(Page $repository) {
+			$commits = $repository->child("template=$this->template_commit_list");
+			return $commits->find($this->selector_commit_sequential)->last();
+		}
+
+		public function get_lastcommit_customer(Page $customer) {
+			$commits = $customer->parent("template=$this->template_repo")->child("template=$this->template_commit_list");
+			return $commits->find("$this->selector_commit_sequential, commit_customers=$customer->name")->last();
+		}
+}

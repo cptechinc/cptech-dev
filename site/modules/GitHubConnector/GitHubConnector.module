@@ -1,0 +1,139 @@
+<?php
+	use GitHubClient, GitHubCommit;
+
+	class GitHubConnector extends Process implements ConfigurableModule {
+		protected $github;
+		private $module_repos = 'GitHubRepositories';
+
+		public static function getModuleInfo() {
+			return array(
+				'title' => 'GitHub Connector',
+				'version' => 101,
+				'summary' => 'Configures and Connects to Github using tan-tan-kanarek/github-php-client',
+				'singular' => true,
+				'autoload' => true,
+			);
+		}
+
+		static public function getDefaultConfig() {
+			return array(
+				'github_login'       => '', // default set to 4 weeks
+				'github_password'    => '',
+				'github_format_date' => 'Y-m-d',
+				'github_format_time' => 'h:i A'
+			);
+		}
+
+		public function init() {
+			if (empty($this->github)) {
+				$this->github = new GitHubClient();
+				$this->github->setCredentials($this->github_login, $this->github_password);
+			}
+		}
+
+		// GITHUB FUNCTIONS
+		/**
+		 * module settings
+		 *
+		 */
+		static public function getModuleConfigInputfields(array $data) {
+
+			$modules = wire('modules');
+			$fields = new InputfieldWrapper();
+			$defaults = self::getDefaultConfig();
+			$data = array_merge($defaults, $data);
+
+			$f = $modules->get('InputfieldText');
+			$f->attr('name', 'github_login');
+			$f->attr('pattern', '[A-Za-z0-9%#_-]*');
+			$f->set('required', 'true');
+			$f->icon = 'fa-github';
+			$f->label = __('GitHub Login');
+			$f->description = __('This is the login to connect to GitHub');
+			$f->notes = __('');
+			$f->value = $data['github_login'];
+			$fields->add($f);
+
+			$f = $modules->get('InputfieldText');
+			$f->attr('name', 'github_password');
+			$f->set('required', 'true');
+			$f->icon = 'fa-key';
+			$f->label = __('Github Password');
+			$f->description = __('This is the password to connect to GitHub');
+			$f->notes = __('');
+			$f->value = $data['github_password'];
+			$fields->add($f);
+
+			$f = $modules->get('InputfieldText');
+			$f->attr('name', 'github_format_date');
+			$f->set('required', 'true');
+			$f->icon = 'fa-calendar';
+			$f->label = __('Github Date Format');
+			$f->description = __('GitHub Date Format');
+			$f->notes = __('');
+			$f->value = $data['github_format_date'];
+			$fields->add($f);
+
+			$f = $modules->get('InputfieldText');
+			$f->attr('name', 'github_format_time');
+			$f->set('required', 'true');
+			$f->icon = 'fa-clock-o';
+			$f->label = __('Github Time Format');
+			$f->description = __('GitHub Time Format');
+			$f->notes = __('');
+			$f->value = $data['github_format_time'];
+			$fields->add($f);
+
+			return $fields;
+		}
+
+		public function get_client() {
+			if (empty($this->github)) {
+				$this->github = new GitHubClient();
+				$this->github->setCredentials($this->github_login, $this->github_password);
+			}
+			return $this->github;
+		}
+
+		public function import_commits(Page $repo, $branch = 'master') {
+			if (empty($this->github->getPage())) {
+				$this->github->setPage(1);
+			}
+			$github_commits = $this->github->repos->commits->listCommitsOnRepository($repo->owner, $repo->name, $branch);
+			$pw_commits = $repo->child('template='.$this->wire('modules')->get($this->module_repos)->template_commit_list);
+
+			foreach ($github_commits as $github_commit) {
+				$sha = $github_commit->getSha();
+				// Use $commitpage->numChildren("name=$sha") because now the $commit page will be
+				// a Page with a template of repository-commits
+				if (!$pw_commits->numChildren("name=$sha")) {
+					$this->create_commit_page($github_commit, $pw_commits);
+				}
+			}
+		}
+
+		public function create_commit_page(GitHubCommit $commit, Page $commitlist) {
+			$regex_merge = '/(merge)/i';
+
+			$p = new Page();
+			$p->of(false);
+			$p->template = $this->wire('modules')->get($this->module_repos)->template_commit;
+			$p->parent = $commitlist;
+			$p->name = $commit->getSha();
+			$p->title = $commit->getSha();
+			$p->body = $commit->getCommit()->getMessage();
+			$p->is_merge = boolval(preg_match($regex_merge, $commit->getCommit()->getMessage()));
+			$p->date = $commit->getCommit()->getAuthor()->getDate();
+			$p->save();
+			$p->of(true);
+		}
+
+		public function get_commit_fetchstatement(Page $commit) {
+			$repo = $commit->parent("template=".$this->wire('modules')->get($this->module_repos)->template_repo);
+			$github_repo = $this->github->repos->get($repo->owner, $repo->name);
+			$url = $github_repo->getCloneUrl();
+			$fetchstring = "git fetch $url master && git cherry-pick $commit->sha -e -x";
+			$fetchstring .= $commit->is_merge ? ' -m 1 ' : '';
+			return $fetchstring;
+		}
+}
