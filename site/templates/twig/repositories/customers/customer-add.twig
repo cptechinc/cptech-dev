@@ -5,19 +5,41 @@
 			<form action="{{ customer.url }}" method="post">
 				{% if inputpost %}
 					{% if success %}
-						<div class="alert alert-success" role="alert">
-							<h4 class="alert-heading">Success</h4>
-							<p>{{ custtitle }} was added</p>
-							<a href="{{ customer.parent.child('title=' ~ custtitle).url }}" class="btn btn-dark"><i class="fa fa-arrow-circle-right"></i>&ensp;Go to Customer Page</a>
+						<div class="card bg-transparent mb-3" role="alert">
+							<div class="container">
+								<div class="row">
+									<div class="col-1 d-flex justify-content-center align-items-center bg-success text-white">
+										<span data-notify="icon"><i class="fa fa-floppy-o fa-2x" aria-hidden="true"></i></span>
+									</div>
+									<div class="col-11 alert-success">
+										<span data-notify="title" class="h4">Success</span>
+										<div class="notify-message">
+											<p>{{ custtitle }} was added</p>
+											<a href="{{ customer.parent.child('title=' ~ custtitle).url }}" class="btn btn-dark"><i class="fa fa-arrow-circle-right"></i>&ensp;Go to Customer Page</a>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					{% else %}
-						<div class="alert alert-danger" role="alert">
-							<h4 class="alert-heading">Error!</h4>
-							{% if errormsg %}
-								<p>{{ errormsg }}</p>
-							{% else %}
-								<p>{{ custtitle }} was not added</p>
-							{% endif %}
+						<div class="card bg-transparent mb-3" role="alert">
+							<div class="container">
+								<div class="row">
+									<div class="col-1 d-flex justify-content-center align-items-center bg-danger text-white">
+										<span data-notify="icon"><i class="fa fa-warning fa-2x" aria-hidden="true"></i></span>
+									</div>
+									<div class="col-11 alert-danger">
+										<span data-notify="title" class="h4">Error!</span>
+										<div class="notify-message">
+											{% if errormsg %}
+												<p>{{ errormsg }}</p>
+											{% else %}
+												<p>{{ custtitle }} was not added</p>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					{% endif %}
 				{% endif %}
