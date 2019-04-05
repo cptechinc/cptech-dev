@@ -1,5 +1,8 @@
 <div>
 	<a href="{{ commit.parent.url }}" class="btn btn-dark mb-4"><i class="fa fa-arrow-circle-left"></i>&ensp;Back to Commit List</a>
+	{% if (commit.name != repository.lastcommit.name) %}
+		<a href="{{ commit.get_commits_since(commit.name) }}" class="btn btn-primary mb-4"><i class="fa fa-arrow-circle-left"></i>&ensp;Commits Made After this Commit</a>
+	{% endif %}
 	<div class="card">
 		<div class="card-header bg-gray">
 			<div class="row">
@@ -65,7 +68,7 @@
 							</div>
 						</div>
 					{% endif %}
-					
+
 					<hr>
 				</div>
 				<div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
