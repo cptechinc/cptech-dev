@@ -5,13 +5,13 @@
         <div class="col-sm-3">
             <div class="form-group">
                 <label for="beforecommit">Before Commit</label>
-                <input type="text" class="form-control" name="before" placeholder="Enter commit ID">
+                <input type="text" class="form-control" name="before" value="{{ lastcommit.sha }}" placeholder="Enter commit ID">
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
                 <label for="aftercommit">After Commit</label>
-                <input type="text" class="form-control" name="after" placeholder="Enter commit ID">
+                <input type="text" class="form-control" name="after" value="{{ firstcommit.sha }}" placeholder="Enter commit ID">
             </div>
         </div>
         <div class="col-sm-3">

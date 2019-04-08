@@ -1,3 +1,20 @@
+{% if input.get.text('after') %}
+    <div class="mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fa fa-github" aria-hidden="true"></i>&ensp;Cherry Pick Multiple Fetch Statement for {{ firstcommit.sha|slice(0,7) }} to {{ lastcommit.sha|slice(0,7) }}</h4>
+            </div>
+            <div class="card-body">
+                {% if input.get.text('before') %}
+                    {% set lastcommit = lastcommit %}
+                {% else %}
+                    {% set lastcommit = page.lastcommit %}
+                {% endif %}
+                    {{ page.get_commit_cherrypick_mulitple(firstcommit, lastcommit) }}
+            </div>
+        </div>
+    </div>
+{% endif %}
 <div class="mb-4 row">
     <div class="col-sm-6">
         <a href="{{ page.parent.url }}" class="btn btn-primary"><i class="fa fa-arrow-circle-left text-white" aria-hidden="true"></i>&nbsp;&nbsp;Back to Repository</a>

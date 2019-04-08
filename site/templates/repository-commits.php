@@ -66,6 +66,6 @@
 	}
 
 
-    $page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers]);
+    $page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers, 'firstcommit' => $aftercommit, 'lastcommit' => $beforecommit]);
     $config->scripts->append(get_hashedtemplatefileurl('scripts/pages/repository.js'));
     include __DIR__ . "/basic-page.php";
