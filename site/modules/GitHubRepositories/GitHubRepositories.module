@@ -56,6 +56,11 @@
 				$repo = $event->object;
 				$event->return = "$repo->owner/$repo->name";
 			});
+
+			$this->addHookProperty("Page(template=$this->template_repo)::reposignature", function($event) {
+				$repo = $event->object;
+				$event->return = "$repo->owner/$repo->name@";
+			});
 		}
 
 		public function add_template_commit_list_hooks() {

@@ -8,10 +8,13 @@
             <div class="mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h4><i class="fa fa-github" aria-hidden="true"></i>&ensp;Cherry Pick Multiple Fetch Statement for {{ firstcommit.sha|slice(0,7) }} to {{ lastcommit.sha|slice(0,7) }}</h4>
+                    <h3><i class="fa fa-github" aria-hidden="true"></i>&ensp;Git Fetch Statements</h3>
                 </div>
                 <div class="card-body">
+                    <h4>Cherry Pick Multiple Fetch Statement for {{ firstcommit.sha|slice(0,7) }} to {{ lastcommit.sha|slice(0,7) }}</h4>
                     {{ page.get_commit_cherrypick_mulitple(firstcommit, lastcommit) }}
+                    <h4 class="mt-3">Cherry Pick Signature</h4>
+                    {{ page.parent.reposignature }}
                 </div>
             </div>
         </div>
