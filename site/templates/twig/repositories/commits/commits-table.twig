@@ -1,19 +1,21 @@
-{% if input.get.text('after') is not defined %}
-    <div class="mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h4><i class="fa fa-github" aria-hidden="true"></i>&ensp;Cherry Pick Multiple Fetch Statement for {{ firstcommit.sha|slice(0,7) }} to {{ lastcommit.sha|slice(0,7) }}</h4>
-            </div>
-            <div class="card-body">
-                {% if input.get.text('before') is not defined %}
-                    {% set lastcommit = lastcommit %}
-                {% else %}
-                    {% set lastcommit = page.lastcommit %}
-                {% endif %}
+{% if firstcommit %}
+    {% if firstcommit != page.lastcommit %}
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fa fa-github" aria-hidden="true"></i>&ensp;Cherry Pick Multiple Fetch Statement for {{ firstcommit.sha|slice(0,7) }} to {{ lastcommit.sha|slice(0,7) }}</h4>
+                </div>
+                <div class="card-body">
+                    {% if lastcommit %}
+                        {% set lastcommit = lastcommit %}
+                    {% else %}
+                        {% set lastcommit = page.lastcommit %}
+                    {% endif %}
                     {{ page.get_commit_cherrypick_mulitple(firstcommit, lastcommit) }}
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endif %}
 <div class="mb-4 row">
     <div class="col-sm-6">
