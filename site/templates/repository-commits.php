@@ -55,6 +55,22 @@
 		}
 	}
 
+	if ($input->get->text('afterdate') || $input->get->text('beforedate')) {
+		if ($input->get->text('afterdate')) {
+			$afterdate = $input->get->text('afterdate');
+			$input->get->after = date('m/d/Y', strtotime($afterdate));
+		} else {
+			$input->get->after = '';
+		}
+
+		if ($input->get->text('beforedate')) {
+			$beforedate = $input->get->text('beforedate');
+			$input->get->before = date('m/d/Y', strtotime($beforedate));
+		} else {
+			$input->get->before = '';
+		}
+	}
+
 	$selector .= ",".$modules->get('SelectorsFilter')->build_selectorstring($input, 'repository-commit', $fields_toinputs);
 
 
