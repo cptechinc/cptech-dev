@@ -1,16 +1,16 @@
 {% if firstcommit %}
     {% if firstcommit != page.lastcommit %}
-        <div class="mb-4">
+        {% if lastcommit %}
+            {% set lastcommit = lastcommit %}
+        {% else %}
+            {% set lastcommit = page.lastcommit %}
+        {% endif %}
+            <div class="mb-4">
             <div class="card">
                 <div class="card-header">
                     <h4><i class="fa fa-github" aria-hidden="true"></i>&ensp;Cherry Pick Multiple Fetch Statement for {{ firstcommit.sha|slice(0,7) }} to {{ lastcommit.sha|slice(0,7) }}</h4>
                 </div>
                 <div class="card-body">
-                    {% if lastcommit %}
-                        {% set lastcommit = lastcommit %}
-                    {% else %}
-                        {% set lastcommit = page.lastcommit %}
-                    {% endif %}
                     {{ page.get_commit_cherrypick_mulitple(firstcommit, lastcommit) }}
                 </div>
             </div>
