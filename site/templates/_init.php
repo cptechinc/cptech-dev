@@ -31,6 +31,7 @@
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/bootstrap-notify.min.js'));
 	$config->scripts->append('//www.fuelcdn.com/fuelux/3.13.0/js/fuelux.min.js');
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/scripts.js'));
+	$config->scripts->append(get_hashedtemplatefileurl('scripts/main.js'));
 
 	$appconfig = $pages->get('/config/');
 

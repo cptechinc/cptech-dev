@@ -96,3 +96,22 @@ main {min-height: 100%; height: 100%; height: auto; padding-bottom:200px;}
 	.code-div code {
 		color: #212529;
 	}
+
+/*==============================================================
+	FUELUX STYLES
+==============================================================*/
+	.fuelux .datepicker-calendar-days td button, .fuelux .datepicker-calendar-header .title {
+		cursor: pointer;
+	}
+
+	.fuelux .datepicker-calendar-days td.selected.current-day b,
+	.fuelux .datepicker-calendar-days td.selected.current-day button {
+		color: #fff;
+	}
+
+	.fuelux .datepicker-calendar-days td.current-day span {
+		background: #007bff;
+	}
+	.fuelux .datepicker-calendar-days td.current-day button {
+		color: #fff;
+	}
