@@ -1,0 +1,66 @@
+<div>
+	<a href="{{ customer.parent.url }}" class="btn btn-dark mb-3"><i class="fa fa-arrow-circle-left"></i>&ensp;Back to Customer List</a>
+	<div class="card">
+		<div class="card-body">
+			<form action="{{ customer.url }}" method="post">
+				{% if inputpost %}
+					{% if success %}
+						<div class="card bg-transparent mb-3" role="alert">
+							<div class="container">
+								<div class="row">
+									<div class="col-1 d-flex justify-content-center align-items-center bg-success text-white">
+										<span data-notify="icon"><i class="fa fa-floppy-o fa-2x" aria-hidden="true"></i></span>
+									</div>
+									<div class="col-11 alert-success">
+										<span data-notify="title" class="h4">Success</span>
+										<div class="notify-message">
+											<p>{{ custtitle }} was added</p>
+											<a href="{{ customer.parent.child('title=' ~ custtitle).url }}" class="btn btn-dark"><i class="fa fa-arrow-circle-right"></i>&ensp;Go to Customer Page</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% else %}
+						<div class="card bg-transparent mb-3" role="alert">
+							<div class="container">
+								<div class="row">
+									<div class="col-1 d-flex justify-content-center align-items-center bg-danger text-white">
+										<span data-notify="icon"><i class="fa fa-warning fa-2x" aria-hidden="true"></i></span>
+									</div>
+									<div class="col-11 alert-danger">
+										<span data-notify="title" class="h4">Error!</span>
+										<div class="notify-message">
+											{% if errormsg %}
+												<p>{{ errormsg }}</p>
+											{% else %}
+												<p>{{ custtitle }} was not added</p>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endif %}
+				{% endif %}
+				<div class="form-group">
+					<label for="">Customer Title</label>
+					<input type="text" class="form-control" name="custtitle" placeholder="Enter customer title">
+				</div>
+				<div class="form-group">
+					<label for="">Customer Repository</label>
+					<input type="text" class="form-control" name="custrepo" placeholder="Enter customer repository">
+				</div>
+				<div class="form-group">
+					<label for="">Customer Project Code</label>
+					<input type="text" class="form-control" name="custcode" placeholder="Enter customer code">
+				</div>
+				<div class="form-group">
+					<label for="">Customer Notes</label>
+					<textarea class="form-control" row="2" name="custnote" placeholder="Enter customer note"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+</div>

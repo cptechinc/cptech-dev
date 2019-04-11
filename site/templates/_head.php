@@ -24,7 +24,7 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="<?= $pages->get('/')->url; ?>"><?= $pages->get('/')->title; ?></a>
                     </li>
-					<?php foreach ($pages->get('/')->children() as $child) : ?>
+					<?php foreach ($pages->get('/')->children('template!=login|logout') as $child) : ?>
 						<?php if ($child->hasChildren()) : ?>
 							<li class="nav-item dropdown">
 		                        <a class="nav-link dropdown-toggle" href="<?= $child->url; ?>" id="<?= $child->name; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?= $child->title; ?></a>
@@ -40,6 +40,11 @@
 		                    </li>
 						<?php endif; ?>
 					<?php endforeach; ?>
+					<?php if ($user->isLoggedin()) : ?>
+						<li class="nav-item active">
+							<a class="nav-link" href="<?= $pages->get('template=logout')->url; ?>">Logout</a>
+						</li>
+					<?php endif; ?>
 
                 </ul>
 

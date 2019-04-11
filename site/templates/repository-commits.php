@@ -55,6 +55,22 @@
 		}
 	}
 
+	if ($input->get->text('afterdate') || $input->get->text('beforedate')) {
+		if ($input->get->text('afterdate')) {
+			$afterdate = $input->get->text('afterdate');
+			$input->get->after = date('m/d/Y', strtotime($afterdate));
+		} else {
+			$input->get->after = '';
+		}
+
+		if ($input->get->text('beforedate')) {
+			$beforedate = $input->get->text('beforedate');
+			$input->get->before = date('m/d/Y', strtotime($beforedate));
+		} else {
+			$input->get->before = '';
+		}
+	}
+
 	$selector .= ",".$modules->get('SelectorsFilter')->build_selectorstring($input, 'repository-commit', $fields_toinputs);
 
 
@@ -66,6 +82,6 @@
 	}
 
 
-    $page->body = $config->twig->render('repositories/commits/commits-table.twig', ['commits' => $commits, 'customers' => $customers]);
+    $page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers, 'firstcommit' => $aftercommit, 'lastcommit' => $beforecommit]);
     $config->scripts->append(get_hashedtemplatefileurl('scripts/pages/repository.js'));
     include __DIR__ . "/basic-page.php";

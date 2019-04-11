@@ -13,7 +13,7 @@
 		public static function getModuleInfo() {
 			return array(
 				'title' => 'GitHub Repositories Extension',
-				'version' => 102,
+				'version' => 101,
 				'summary' => 'Extends templates for GitHub Properties',
 				'singular' => true,
 				'autoload' => true,
@@ -56,12 +56,25 @@
 				$repo = $event->object;
 				$event->return = "$repo->owner/$repo->name";
 			});
+
+			$this->addHookProperty("Page(template=$this->template_repo)::reposignature", function($event) {
+				$repo = $event->object;
+				$event->return = "$repo->owner/$repo->name@";
+			});
 		}
 
 		public function add_template_commit_list_hooks() {
 			$this->addHookProperty("Page(template=$this->template_commit_list)::lastcommit", function($event) {
 				$commits = $event->object;
 				$event->return = $commits->find($this->selector_commit_sequential)->last();
+			});
+
+			$this->addHook("Page(template=$this->template_commit_list)::get_commit_cherrypick_mulitple", function($event) {
+				$commits = $event->object;
+				$firstcommit = $event->arguments(0);
+				$lastcommit = $event->arguments(1);
+				$github = $this->wire('modules')->get($this->module_github);
+				$event->return = $github->get_commit_cherrypick_multiple($firstcommit, $lastcommit);
 			});
 		}
 
@@ -119,6 +132,14 @@
 				$github = $this->wire('modules')->get($this->module_github);
 				$event->return = $github->get_commit_fetchstatement($commit);
 			});
+
+			$this->addHook("Page(template=$this->template_commit)::get_commits_since", function($event) {
+				$commit = $event->object;
+				$sha = $event->arguments(0);
+				$url = $commit->parent("template=$this->template_commit_list")->url;
+				$url = $url . '?after=' . $sha;
+				$event->return = $url;
+			});
 		}
 
 		public function has_latestcommit(Page $customer) {
@@ -153,5 +174,17 @@
 		public function get_lastcommit_customer(Page $customer) {
 			$commits = $customer->parent("template=$this->template_repo")->child("template=$this->template_commit_list");
 			return $commits->find("$this->selector_commit_sequential, commit_customers=$customer->name")->last();
+		}
+
+		public function add_customer($title, $repo, $code, $note) {
+			$p = new Page(); // create new page object
+			$p->template = 'repository-customer';
+			$p->parent = wire('pages')->get('template=repository-customer-list');
+			$p->title = $title;
+			$p->save();
+			$p->repo = $repo;
+			$p->code = $code;
+			$p->note = $note;
+			return $p->save();
 		}
 }

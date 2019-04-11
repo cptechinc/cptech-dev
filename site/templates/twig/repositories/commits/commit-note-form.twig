@@ -2,9 +2,13 @@
 	<input type="hidden" name="action" value="save-note">
 	<div class="placard" data-initialize="placard">
 		<div class="placard-popup"></div>
-		<textarea name="note" rows="2" class="form-control placard-field">
-			{{ commit.note|trim }}
-		</textarea>
+		{% if user.role('project-admin') %}
+			<textarea name="note" rows="2" class="form-control placard-field">
+				{{ commit.note|trim }}
+			</textarea>
+		{% else %}
+			<p>{{ commit.note|trim }}</p>
+		{% endif %}
 		<div class="placard-footer">
 			<a class="placard-cancel" href="#">Cancel</a>
 			<button class="btn btn-primary btn-xs placard-accept" type="button">Save</button>

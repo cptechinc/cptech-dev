@@ -136,4 +136,12 @@
 			$fetchstring .= $commit->is_merge ? ' -m 1 ' : '';
 			return $fetchstring;
 		}
+
+		public function get_commit_cherrypick_multiple(Page $firstcommit, Page $lastcommit) {
+			$repo = $firstcommit->parent("template=".$this->wire('modules')->get($this->module_repos)->template_repo);
+			$github_repo = $this->github->repos->get($repo->owner, $repo->name);
+			$url = $github_repo->getCloneUrl();
+			$fetchstring = "git fetch $url master && git cherry-pick $firstcommit->sha^..$lastcommit->sha -e -x";
+			return $fetchstring;
+		}
 }
