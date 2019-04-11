@@ -76,7 +76,6 @@
 
 	$selector .= ",".$modules->get('SelectorsFilter')->build_selectorstring($input, 'repository-commit', $fields_toinputs);
 
-
 	$commits = $page->children($selector);
 	$selectors = $commits->getSelectors();
 
@@ -84,7 +83,6 @@
 		$page->title = "Commits with " . $selectors->describe('repository-commit');
 	}
 
-
-	$page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers, 'firstcommit' => $aftercommit, 'lastcommit' => $beforecommit]);
+	$page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers]);
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/pages/repository.js'));
 	include __DIR__ . "/basic-page.php";
