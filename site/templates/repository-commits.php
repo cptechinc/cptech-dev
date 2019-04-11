@@ -51,7 +51,7 @@
 
 			if ($page->hasChildren("name=$sha")) {
 				$beforecommit = $page->get("name=$sha");
-				$input->get->before = date($dateformat, $aftercommit->getUnformatted('date'));
+				$input->get->before = date($dateformat, $beforecommit->getUnformatted('date'));
 			} else {
 				$input->get->before = '';
 			}
