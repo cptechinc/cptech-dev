@@ -1,6 +1,6 @@
 <?php
 	include($config->paths->templates."/twig/repositories/commits/functions.php");
-    $repository = $page->parent;
+	$repository = $page->parent;
 
 	$github = $modules->get('GitHubConnector');
 	$github->import_commits($repository);
@@ -32,12 +32,15 @@
 	);
 
 	if ($input->get->after || $input->get->before) {
+		$field_date = $fields->get('date');
+		$dateformat = "$field_date->dateInputFormat $field_date->timeInputFormat";
+
 		if ($input->get->after) {
 			$sha = $input->get->text('after');
 
 			if ($page->hasChildren("name=$sha")) {
 				$aftercommit = $page->get("name=$sha");
-				$input->get->after = date('m/d/Y', strtotime($aftercommit->date));
+				$input->get->after = date($dateformat, $aftercommit->getUnformatted('date'));
 			} else {
 				$input->get->after = '';
 			}
@@ -48,7 +51,7 @@
 
 			if ($page->hasChildren("name=$sha")) {
 				$beforecommit = $page->get("name=$sha");
-				$input->get->before = date('m/d/Y', strtotime($beforecommit->date));
+				$input->get->before = date($dateformat, $aftercommit->getUnformatted('date'));
 			} else {
 				$input->get->before = '';
 			}
@@ -82,6 +85,6 @@
 	}
 
 
-    $page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers, 'firstcommit' => $aftercommit, 'lastcommit' => $beforecommit]);
-    $config->scripts->append(get_hashedtemplatefileurl('scripts/pages/repository.js'));
-    include __DIR__ . "/basic-page.php";
+	$page->body = $config->twig->render('repositories/commits/commits-table.twig', ['page' => $page, 'input' => $input, 'commits' => $commits, 'customers' => $customers, 'firstcommit' => $aftercommit, 'lastcommit' => $beforecommit]);
+	$config->scripts->append(get_hashedtemplatefileurl('scripts/pages/repository.js'));
+	include __DIR__ . "/basic-page.php";
