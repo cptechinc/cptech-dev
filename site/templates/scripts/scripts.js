@@ -26,6 +26,14 @@ $(document).ready(function() {
 		$('body,html').animate({ scrollTop: 0 }, 800);
 		return false;
 	});
+
+	$('form[submit-empty="false"]').submit(function () {
+        var $empty_fields = $(this).find(':input').filter(function () {
+            return $(this).val() === '';
+        });
+        $empty_fields.prop('disabled', true);
+        return true;
+    });
 });
 
 function preview_tableformatter(formatterform) {

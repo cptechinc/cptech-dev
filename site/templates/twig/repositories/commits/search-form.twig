@@ -1,17 +1,16 @@
 <h2>Search Commits</h2>
 <hr>
-<form action="{{ page.url }}" method="get" class="mt-3 mb-5">
+<form action="{{ page.url }}" method="get" class="mt-3 mb-5" submit-empty="false">
+	<input type="hidden" name="filter" value="true">
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-6">
             <div class="form-group">
                 <label for="aftercommit">After Commit</label>
-                <input type="text" class="form-control" name="after" value="{{ firstcommit.sha }}" placeholder="Enter commit ID">
+                <input type="text" class="form-control" name="after" value="{{ commits.data('aftercommitID') }}" placeholder="Enter commit ID">
             </div>
-        </div>
-        <div class="col-sm-3">
             <div class="form-group">
                 <label for="beforecommit">Before Commit</label>
-                <input type="text" class="form-control" name="before" value="{{ lastcommit.sha }}" placeholder="Enter commit ID">
+                <input type="text" class="form-control" name="before" value="{{ commits.data('beforecommitID') }}" placeholder="Enter commit ID">
             </div>
         </div>
         <div class="col-sm-3">

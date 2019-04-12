@@ -39,8 +39,8 @@
 			$sha = $input->get->text('after');
 
 			if ($page->hasChildren("name=$sha")) {
-				$aftercommit = $page->get("name=$sha");
-				$input->get->after = date($dateformat, $aftercommit->getUnformatted('date'));
+				$page->aftercommit = $page->get("name=$sha");
+				$input->get->after = date($dateformat, $page->aftercommit->getUnformatted('date'));
 			} else {
 				$input->get->after = '';
 			}
@@ -50,8 +50,8 @@
 			$sha = $input->get->text('before');
 
 			if ($page->hasChildren("name=$sha")) {
-				$beforecommit = $page->get("name=$sha");
-				$input->get->before = date($dateformat, $beforecommit->getUnformatted('date'));
+				$page->beforecommit = $page->get("name=$sha");
+				$input->get->before = date($dateformat, $page->beforecommit->getUnformatted('date'));
 			} else {
 				$input->get->before = '';
 			}
@@ -77,6 +77,15 @@
 	$selector .= ",".$modules->get('SelectorsFilter')->build_selectorstring($input, 'repository-commit', $fields_toinputs);
 
 	$commits = $page->children($selector);
+
+	if ($page->beforecommit) {
+		$commits->data('beforecommitID', $page->beforecommit->sha);
+	}
+
+	if ($page->aftercommit) {
+		$commits->data('aftercommitID', $page->aftercommit->sha);
+	}
+
 	$selectors = $commits->getSelectors();
 
 	if ($selectors->is_filtering('repository-commit')) {
