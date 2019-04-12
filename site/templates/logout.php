@@ -1,3 +1,3 @@
 <?php
     $session->logout();
-    $session->redirect("/dev/login/");
+    $session->redirect($pages->get('template=login')->url);

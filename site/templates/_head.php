@@ -42,7 +42,7 @@
 					<?php endforeach; ?>
 					<?php if ($user->isLoggedin()) : ?>
 						<li class="nav-item active">
-							<a class="nav-link" href="<?= $pages->get('template=logout')->url; ?>">Logout</a>
+							<a class="nav-link btn btn-secondary text-white" href="<?= $pages->get('template=logout')->url; ?>">Logout</a>
 						</li>
 					<?php endif; ?>
 

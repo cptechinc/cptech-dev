@@ -1,18 +1,16 @@
 <div class="container page col-sm-3 mx-auto" id="login-container">
-	<form method="POST" action="{{ page.url }}" class="form-signin text-center">
+	<form action="{{ page.url }}" class="form-signin text-center" method="POST" >
 		<input type="hidden" name="action" value="login">
 		<h1>CP Tech Dev</h1>
-		{% if user.loggedin %}
+		{% if not user.loggedin %}
 			{% if errormsg is not empty %}
 				<div class="alert alert-danger alert-dismissible not-round" role="alert">
 				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				  <strong>Warning!</strong></br>{{ errormsg }}
 				</div>
 			{% else %}
-				<br>
+				</br>
 			{% endif %}
-		{% else %}
-
 		{% endif %}
 		<div class="form-group">
 			<label for="inputUsername" class="sr-only">Username</label>
@@ -24,6 +22,6 @@
 		</div>
 
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-		<p class="mt-4 mb-3 text-muted">CP Tech &copy; {{ date }}</p>
+		<p class="mt-4 mb-3 text-muted">CP Tech &copy; {{ "now"|date("Y") }}</p>
 	</form>
 </div>
