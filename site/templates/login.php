@@ -9,13 +9,14 @@
 
         if ($session->login($user, $password)) {
             // login successful
+            $session->remove('errormsg');
             $session->redirect($pages->get('template=home')->url);
         } else {
-			$errormsg = 'Incorrect username and password. Please try again.';
+			$session->errormsg = 'Incorrect username or password';
             $session->redirect($pages->get('template=login')->url);
         }
     }
 
-	$config->twig->display('login.twig', ['page' => $page, 'user' => $user, 'pages' => $pages, 'errormsg' => $errormsg]);
+	$config->twig->display('login.twig', ['page' => $page, 'user' => $user, 'pages' => $pages, 'errormsg' => $session->errormsg]);
 
 	include('./_foot-blank.php'); ?>

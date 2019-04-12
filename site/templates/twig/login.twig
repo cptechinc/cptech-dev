@@ -1,27 +1,31 @@
-<div class="container page col-sm-3 mx-auto" id="login-container">
-	<form action="{{ page.url }}" class="form-signin text-center" method="POST" >
-		<input type="hidden" name="action" value="login">
-		<h1>CP Tech Dev</h1>
+<div class="container-fluid page" id="login-container">
+	<h1 class="text-center mb-4">CP Tech Dev</h1>
+
+	<div class="col-sm-4 mx-auto">
 		{% if not user.loggedin %}
 			{% if errormsg is not empty %}
-				<div class="alert alert-danger alert-dismissible not-round" role="alert">
-				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				  <strong>Warning!</strong></br>{{ errormsg }}
-				</div>
-			{% else %}
-				</br>
+				{% include 'util/alert.twig' with {'type': 'danger', 'title': 'Error!', 'iconclass': 'fa fa-warning fa-2x', 'message': errormsg } %}
 			{% endif %}
+			<br>
 		{% endif %}
-		<div class="form-group">
-			<label for="inputUsername" class="sr-only">Username</label>
-			<input type="text" id="inputUsername" name="username" class="form-control" placeholder="Username" required="">
-		</div>
-		<div class="form-group">
-			<label for="inputPassword" class="sr-only">Password</label>
-			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="">
-		</div>
+	</div>
 
-		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-		<p class="mt-4 mb-3 text-muted">CP Tech &copy; {{ "now"|date("Y") }}</p>
-	</form>
+	<div class="col-sm-4 mx-auto">
+		<form action="{{ page.url }}" class="form-signin text-center" method="POST" >
+			<input type="hidden" name="action" value="login">
+
+			<div class="form-group">
+				<label for="inputUsername" class="sr-only">Username</label>
+				<input type="text" id="inputUsername" name="username" class="form-control" placeholder="Username" required="">
+			</div>
+
+			<div class="form-group">
+				<label for="inputPassword" class="sr-only">Password</label>
+				<input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="">
+			</div>
+
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+			<p class="mt-4 mb-3 text-muted">CP Tech &copy; {{ "now"|date("Y") }}</p>
+		</form>
+	</div>
 </div>
