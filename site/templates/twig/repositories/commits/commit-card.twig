@@ -21,9 +21,13 @@
 				<i class="fa fa-code-fork" aria-hidden="true"></i> This is a merge commit
 			</div>
 		{% endif %}
-		{% if commit.index != 0 %}
+		{% if commit.index == 1 %}
 			<div class="card-header bg-secondary text-white">
-				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} behind.
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commit behind.
+			</div>
+		{% elseif commit.index != 0 %}
+			<div class="card-header bg-secondary text-white">
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commits behind.
 			</div>
 		{% endif %}
 
