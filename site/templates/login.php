@@ -4,7 +4,6 @@
     if ($input->requestMethod('POST')) {
         $username = $input->post->text('username');
         $password = $input->post->text('password');
-
 		$user = $sanitizer->username($username);
 
         if ($session->login($user, $password)) {
@@ -18,5 +17,4 @@
     }
 
 	$config->twig->display('login.twig', ['page' => $page, 'user' => $user, 'pages' => $pages, 'errormsg' => $session->errormsg]);
-
 	include('./_foot-blank.php'); ?>
