@@ -36,7 +36,7 @@
 	$appconfig = $pages->get('/config/');
 
 	if ($page->template != 'login' && !$user->isLoggedin()) {
-		$session->redirect("/dev/login/");
+		$session->redirect($pages->get('template=login')->url);
 	}
 
 	$page->fullURL = new \Purl\Url($page->httpUrl);

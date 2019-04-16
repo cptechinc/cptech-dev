@@ -21,6 +21,15 @@
 				<i class="fa fa-code-fork" aria-hidden="true"></i> This is a merge commit
 			</div>
 		{% endif %}
+		{% if commit.index == 1 %}
+			<div class="card-header bg-secondary text-white">
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commit behind.
+			</div>
+		{% elseif commit.index != 0 %}
+			<div class="card-header bg-secondary text-white">
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commits behind.
+			</div>
+		{% endif %}
 
 		<div class="card-body">
 			<nav class="mb-4">
@@ -32,11 +41,20 @@
 			</nav>
 			<div class="tab-content p-3" id="nav-tabContent">
 				<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-					<div class="mb-4">
-						<h3><i class="fa fa-github" aria-hidden="true"></i> SHA</h3>
-						{{ commit.name }}
+					<div class="row">
+						<div class="col-sm-5">
+							<div class="mb-4">
+								<h3><i class="fa fa-github" aria-hidden="true"></i> SHA</h3>
+								{{ commit.name }}
+							</div>
+						</div>
+						<div class="col-sm-7">
+							<div class="mb-4">
+								<h3><i class="fa fa-calendar" aria-hidden="true"></i> Commit Date</h3>
+								{{ commit.date|date("m/d/Y") }}
+							</div>
+						</div>
 					</div>
-
 					<div class="mb-3">
 						<h3><i class="fa fa-sticky-note-o" aria-hidden="true"></i> Commit Message</h3>
 						<div class="bg-light p-2">

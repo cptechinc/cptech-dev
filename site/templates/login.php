@@ -1,33 +1,20 @@
 <?php
 	include('./_head-blank.php');
 
-    if($user->isLoggedin()) {
-        // user is already logged in, so they don't need to be here
-        $session->redirect("/dev/");
-    }
-
     if ($input->requestMethod('POST')) {
         $username = $input->post->text('username');
         $password = $input->post->text('password');
-    }
+		$user = $sanitizer->username($username);
 
-    // check for login before outputting markup
-    if ($username && $password) {
-
-        $user = $sanitizer->username($username);
-        $pass = $password;
-
-        if ($session->login($user, $pass)) {
+        if ($session->login($user, $password)) {
             // login successful
-            $session->redirect("/dev/");
+            $session->remove('errormsg');
+            $session->redirect($pages->get('template=home')->url);
         } else {
-            $session->redirect("/dev/login/");
+			$session->errormsg = 'Incorrect username or password';
+            $session->redirect($pages->get('template=login')->url);
         }
     }
 
-	$errormsg = get_loginerrormsg(session_id());
-	$date = date('Y');
-
-	$config->twig->display('login.twig', ['page' => $page, 'user' => $user, 'pages' => $pages, 'errormsg' => $errormsg, 'date' => $date]);
-
+	$config->twig->display('login.twig', ['page' => $page, 'user' => $user, 'pages' => $pages, 'errormsg' => $session->errormsg]);
 	include('./_foot-blank.php'); ?>
