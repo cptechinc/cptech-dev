@@ -40,17 +40,10 @@
 		                    </li>
 						<?php endif; ?>
 					<?php endforeach; ?>
-					<?php if ($user->isLoggedin()) : ?>
-						<li class="nav-item active">
-							<a class="nav-link btn btn-secondary text-white" href="<?= $pages->get('template=logout')->url; ?>">Logout</a>
-						</li>
-					<?php endif; ?>
-
                 </ul>
 
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" placeholder="Search" aria-label="Search" type="text">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+				<?php if ($user->isLoggedin()) : ?>
+					<a class="btn btn-danger text-white" href="<?= $pages->get('template=logout')->url; ?>">Logout</a>
+				<?php endif; ?>
             </div>
         </nav>
