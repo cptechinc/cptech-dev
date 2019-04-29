@@ -3,7 +3,7 @@
 
 	class GitHubConnector extends Process implements ConfigurableModule {
 		protected $github;
-		private $module_repos = 'GitHubRepositories';
+		private $module_repos = 'GitHubPW';
 
 		public static function getModuleInfo() {
 			return array(
@@ -95,53 +95,16 @@
 			return $this->github;
 		}
 
-		public function import_commits(Page $repo, $branch = 'master') {
-			if (empty($this->github->getPage())) {
-				$this->github->setPage(1);
-			}
-			$github_commits = $this->github->repos->commits->listCommitsOnRepository($repo->owner, $repo->name, $branch);
-			$pw_commits = $repo->child('template='.$this->wire('modules')->get($this->module_repos)->template_commit_list);
-
-			foreach ($github_commits as $github_commit) {
-				$sha = $github_commit->getSha();
-				// Use $commitpage->numChildren("name=$sha") because now the $commit page will be
-				// a Page with a template of repository-commits
-				if (!$pw_commits->numChildren("name=$sha")) {
-					$this->create_commit_page($github_commit, $pw_commits);
-				}
-			}
+		public function get_repourl($owner, $repo) {
+			$github_repo = $this->github->repos->get($owner, $repo);
+			return $github_repo->getCloneUrl();
 		}
 
-		public function create_commit_page(GitHubCommit $commit, Page $commitlist) {
-			$regex_merge = '/(merge)/i';
-
-			$p = new Page();
-			$p->of(false);
-			$p->template = $this->wire('modules')->get($this->module_repos)->template_commit;
-			$p->parent = $commitlist;
-			$p->name = $commit->getSha();
-			$p->title = $commit->getSha();
-			$p->body = $commit->getCommit()->getMessage();
-			$p->is_merge = boolval(preg_match($regex_merge, $commit->getCommit()->getMessage()));
-			$p->date = $commit->getCommit()->getAuthor()->getDate();
-			$p->save();
-			$p->of(true);
+		public function get_repolabels($owner, $repo) {
+			return $this->github->issues->labels->listAllLabelsForThisRepository($owner, $repo);
 		}
 
-		public function get_commit_fetchstatement(Page $commit) {
-			$repo = $commit->parent("template=".$this->wire('modules')->get($this->module_repos)->template_repo);
-			$github_repo = $this->github->repos->get($repo->owner, $repo->name);
-			$url = $github_repo->getCloneUrl();
-			$fetchstring = "git fetch $url master && git cherry-pick $commit->sha -e -x";
-			$fetchstring .= $commit->is_merge ? ' -m 1 ' : '';
-			return $fetchstring;
-		}
-
-		public function get_commit_cherrypick_multiple(Page $firstcommit, Page $lastcommit) {
-			$repo = $firstcommit->parent("template=".$this->wire('modules')->get($this->module_repos)->template_repo);
-			$github_repo = $this->github->repos->get($repo->owner, $repo->name);
-			$url = $github_repo->getCloneUrl();
-			$fetchstring = "git fetch $url master && git cherry-pick $firstcommit->sha^..$lastcommit->sha -e -x";
-			return $fetchstring;
+		public function create_label($owner, $repo, $name, $color) {
+			return $this->github->issues->labels->createLabel($owner, $repo, $name, $color);
 		}
 }

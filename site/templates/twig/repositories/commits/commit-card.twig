@@ -21,6 +21,11 @@
 				<i class="fa fa-code-fork" aria-hidden="true"></i> This is a merge commit
 			</div>
 		{% endif %}
+		{% if commit.updated_composer %}
+			<div class="card-header bg-warning">
+				<i class="fa fa-cog" aria-hidden="true"></i> This Commit Updated Composer
+			</div>
+		{% endif %}
 		{% if commit.index == 1 %}
 			<div class="card-header bg-secondary text-white">
 				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commit behind.
@@ -93,7 +98,13 @@
 					<h3 class="mb-4">Files Affected</h3>
 					<ul class="files-list">
 						{% for file in github_commit.getFiles() %}
-							<li>{{ file.getFilename() }}</li>
+							<li class="p-2">
+								<span class="badge badge-{{ get_commitfilestatuscolor(file.getStatus()) }}">
+									<i class="{{ get_commitfilestatusicon(file.getStatus()) }}" aria-hidden="true"></i>
+								</span>
+								&nbsp;
+								{{ file.getFilename() }}
+							</li>
 						{% endfor %}
 					</ul>
 				</div>

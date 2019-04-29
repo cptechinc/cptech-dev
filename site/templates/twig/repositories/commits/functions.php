@@ -18,4 +18,41 @@
             return "Committed ". date("M j, Y", strtotime($date));
         }
     });
+
     $config->twig->addFunction($function);
+
+	$function = new Twig_Function('get_commitfilestatuscolor', function ($status) {
+        $class = '';
+
+		switch ($status) {
+			case 'modified':
+				$class = "warning";
+				break;
+			case 'deleted':
+				$class = "danger";
+				break;
+			case 'added':
+				$class = "success";
+				break;
+		}
+		return $class;
+    });
+	$config->twig->addFunction($function);
+
+	$function = new Twig_Function('get_commitfilestatusicon', function ($status) {
+        $class = '';
+
+		switch ($status) {
+			case 'modified':
+				$class = "fa fa-pencil";
+				break;
+			case 'deleted':
+				$class = "fa fa-trash";
+				break;
+			case 'added':
+				$class = "fa fa-plus";
+				break;
+		}
+		return $class;
+    });
+	$config->twig->addFunction($function);

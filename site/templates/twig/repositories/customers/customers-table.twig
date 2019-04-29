@@ -28,16 +28,20 @@
 					{{ customer.repo }}
 				</td>
 				<td>
-					{% if (customer.has_latestcommit()) %}
-						<span class="text-success">
-							<i class="fa fa-check-square-o" aria-hidden="true"></i>
-							Up To Date
-						</span>
+					{% if (customer.has_commits()) %}
+						{% if (customer.has_latestcommit()) %}
+							<span class="text-success">
+								<i class="fa fa-check-square-o" aria-hidden="true"></i>
+								Up To Date
+							</span>
+						{% else %}
+							<span class="text-danger">
+								<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+								Last Commit: {{ customer.lastcommit.shortsha }}
+							</span>
+						{% endif %}
 					{% else %}
-						<span class="text-danger">
-							<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-							Last Commit: {{ customer.lastcommit.shortsha }}
-						</span>
+						N/A
 					{% endif %}
 				</td>
 			</tr>

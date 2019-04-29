@@ -37,7 +37,11 @@
 				<div class="mb-3">
 					<h3><i class="fa fa-book" aria-hidden="true"></i> Customer Repository</h3>
 					<p>
-						{{ customer.repo }}
+						{% if (repo.id) %}
+							<a href="{{ repo.get_githuburl() }}" target="_blank">{{ customer.repo }}</a>
+						{% else %}
+							{{ customer.repo }}
+						{% endif %}
 					</p>
 				</div>
 
