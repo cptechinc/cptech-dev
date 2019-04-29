@@ -2,7 +2,7 @@
 	include($config->paths->templates."/twig/repositories/commits/functions.php");
 	$repository = $page->parent;
 
-	$github = $modules->get('GitHubConnector');
+	$github = $modules->get('GitHubCommits');
 	$github->import_commits($repository);
 	$customers = $repository->child('name=customers')->children();
 	$selector = '';
