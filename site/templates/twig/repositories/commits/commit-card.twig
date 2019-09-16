@@ -111,7 +111,7 @@
 				<div class="tab-pane fade" id="fetch" role="tabpanel" aria-labelledby="fetch-tab">
 					<div class="mb-4">
 						<h3>Git Fetch {{ (commit.is_merge) ? 'Merge' : '' }}</h3>
-						<p class="card-text">{{ commit.get_fetchstatement() }}</p>
+						<p class="card-text">{# commit.get_fetchstatement() #}</p>
 					</div>
 
 					<div class="mb-4">

@@ -129,8 +129,8 @@
 			// GITHUB REPO HOOKS
 			$this->addHook("Page(template=$this->template_commit)::get_fetchstatement", function($event) {
 				$commit = $event->object;
-				$github = $this->wire('modules')->get($this->module_github);
-				$event->return = $github->get_commit_fetchstatement($commit);
+				$module_commits = $this->wire('modules')->get('GitHubCommits');
+				$event->return = $module_commits->get_commit_fetchstatement($commit);
 			});
 
 			$this->addHook("Page(template=$this->template_commit)::get_commits_since", function($event) {
@@ -176,10 +176,10 @@
 			return $commits->find("$this->selector_commit_sequential, commit_customers=$customer->name")->last();
 		}
 
-		public function add_customer($title, $repo, $code, $note) {
+		public function add_customer(Page $repository, $title, $repo, $code, $note) {
 			$p = new Page(); // create new page object
 			$p->template = 'repository-customer';
-			$p->parent = wire('pages')->get('template=repository-customer-list');
+			$p->parent = $repository->child('template=repository-customer-list');
 			$p->title = $title;
 			$p->save();
 			$p->repo = $repo;

@@ -15,7 +15,7 @@
             if ($does_exist) {
                 $success = false;
             } else {
-                $success = $module_repo->add_customer($custtitle, $custrepo, $custcode, $custnote);
+                $success = $module_repo->add_customer($page->parent('template=repository'), $custtitle, $custrepo, $custcode, $custnote);
             }
         } else {
             $success = false;
