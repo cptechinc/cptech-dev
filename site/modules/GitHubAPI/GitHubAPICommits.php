@@ -7,7 +7,13 @@ class GitHubAPICommits extends WireData {
 		$this->client = new GithubClient();
 	}
 
-
+	/**
+	 * Return GitHubCommits
+	 * @param  string $owner  Repository Owner
+	 * @param  string $repo   Repository Name
+	 * @param  string $branch Repository Branch
+	 * @return GitHubCommit[]
+	 */
 	public function list_commits($owner, $repo, $branch = 'master') {
 		$commits = array();
 		$response = $this->client->api('repo')->commits()->all($owner, $repo, array('sha' => $branch));
@@ -19,11 +25,15 @@ class GitHubAPICommits extends WireData {
 		return $commits;
 	}
 
+	/**
+	 * Return Commit
+	 * @param  string $owner  Repository Owner
+	 * @param  string $repo   Repository Name
+	 * @param  string $sha    Commit ID
+	 * @return GitHubCommit
+	 */
 	public function get_commit($owner, $repo, $sha) {
 		$response = $this->client->api('repo')->commits()->show($owner, $repo, $sha);
 		return GitHubCommit::build($response);
 	}
-
-
-
 }
