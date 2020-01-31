@@ -97,13 +97,13 @@
 				<div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
 					<h3 class="mb-4">Files Affected</h3>
 					<ul class="files-list">
-						{% for file in github_commit.getFiles() %}
+						{% for file in commit.get_commit().files %}
 							<li class="p-2">
-								<span class="badge badge-{{ get_commitfilestatuscolor(file.getStatus()) }}">
-									<i class="{{ get_commitfilestatusicon(file.getStatus()) }}" aria-hidden="true"></i>
+								<span class="badge badge-{{ get_commitfilestatuscolor(file.status) }}">
+									<i class="{{ get_commitfilestatusicon(file.status) }}" aria-hidden="true"></i>
 								</span>
 								&nbsp;
-								{{ file.getFilename() }}
+								{{ file.name }}
 							</li>
 						{% endfor %}
 					</ul>
@@ -111,7 +111,7 @@
 				<div class="tab-pane fade" id="fetch" role="tabpanel" aria-labelledby="fetch-tab">
 					<div class="mb-4">
 						<h3>Git Fetch {{ (commit.is_merge) ? 'Merge' : '' }}</h3>
-						<p class="card-text">{# commit.get_fetchstatement() #}</p>
+						<p class="card-text">{{ commit.get_fetchstatement() }}</p>
 					</div>
 
 					<div class="mb-4">

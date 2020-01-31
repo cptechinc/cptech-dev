@@ -1,10 +1,7 @@
 <?php
 	include($config->paths->templates."/twig/repositories/commits/functions.php");
-	$repository = $page->parent;
-
-	$github = $modules->get('GitHubCommits');
-	$github->import_commits($repository);
-	$customers = $repository->child('name=customers')->children();
+	$page->import_commits();
+	$customers = $page->parent->child('name=customers')->children();
 	$selector = '';
 
 	$fields_toinputs = array(
@@ -75,6 +72,7 @@
 	}
 
 	$selector .= ",".$modules->get('SelectorsFilter')->build_selectorstring($input, 'repository-commit', $fields_toinputs);
+	$selector .= ',sort=-date';
 
 	$commits = $page->children($selector);
 
