@@ -6,7 +6,6 @@ dw_php_codehinting.config
 *.mno
 
 # Processwire Directories
-site/modules
 site/assets
 /wire
 

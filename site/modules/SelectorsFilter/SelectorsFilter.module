@@ -1,0 +1,170 @@
+<?php
+	class SelectorsFilter extends WireData implements Module {
+		private $prefix_fieldtype = 'Fieldtype';
+
+		public static function getModuleInfo() {
+			return array(
+				'title' => 'Selectors Filter Extension',
+				'version' => 101,
+				'summary' => 'Extends Selectors Object',
+				'singular' => true,
+				'autoload' => true,
+			);
+		}
+
+		public function init() {
+			$this->addHookMethod("Selectors::describe", function($event) {
+				$selectors = $event->object;
+				$template = $event->arguments(0);
+				$event->return = $this->describe($selectors, $template);
+			});
+
+			$this->addHookMethod("Selectors::is_filtering", function($event) {
+				$selectors = $event->object;
+				$template = $event->arguments(0);
+				$event->return = $this->is_filtering($selectors, $template);
+			});
+		}
+
+		/**
+		 * Returns a selector string for filtering pages
+		 * $fields_to_inputs = array(
+		 *   array(
+		 *    'input' => 'date',
+		 *    'field' => 'date',
+		 *    'valuetype' => 'array',
+		 *    'delimiter' => '|',
+		 *    'operator'  => '>=|<='
+		 *   )
+		 * )
+		 * @param  WireInput $input           $_GET Array
+		 * @param  string    $templatename    Template Name to pull filterable field names / Types
+		 * @param  array     $fields_toinputs
+		 * @return string                     Selector e.g. date>=03/21/2019
+		 */
+		public function build_selectorstring(WireInput $input, $templatename, array $fields_toinputs) {
+			$selector = [];
+
+			$fieldgroup = $this->get_templatefieldgroup($templatename);
+
+			foreach ($fields_toinputs as $fieldname => $inputfields) {
+				foreach ($inputfields as $field_toinput) {
+					$inputname = $field_toinput['input'];
+
+					if ($fieldgroup->hasField($fieldname) && $input->get->$inputname) {
+						$selector[] = $this->build_fieldselector($field_toinput, $fieldgroup->get($fieldname), $input);
+					}
+				}
+			}
+			
+			return implode(",", $selector);
+		}
+
+		protected function build_fieldselector(array $field_toinput, Field $field, WireInput $input) {
+			$type = strtolower(str_replace($this->prefix_fieldtype, '', $field->type->shortName));
+			$function = "build_field_selector_$type";
+			return $this->$function($field_toinput, $input);
+		}
+
+		protected function build_field_selector_datetime($field_toinput, WireInput $input) {
+			$selectorarray = [];
+			$fieldname = $field_toinput['field'];
+			$requestmethod = strtolower($input->requestMethod());
+
+			if ($field_toinput['valuetype'] == 'array') {
+				$operators = explode('|', $field_toinput['operator']);
+				$datestring = $input->$requestmethod->text($field_toinput['input']);
+				$dates = explode($field_toinput['delimiter'], $datestring);
+
+				if (!empty($dates[0])) {
+					$start = strtotime($dates[0]);
+					$operator = $operators[0];
+					$selectorarray[] = "$fieldname$operator$start";
+				}
+
+				if (!empty($dates[1])) {
+					$end = strtotime($dates[1]);;
+					$operator = $operators[1];
+					$selectorarray[] = "$fieldname$operator$end";
+				}
+			} else {
+				$date = strtotime($input->$requestmethod->text($field_toinput['input']));
+				$operator = $field_toinput['operator'];
+				$selectorarray[] = "$fieldname$operator$date";
+			}
+
+			return implode(",", $selectorarray);
+		}
+
+		/**
+		 * Returns a description of the Selectors being applied
+		 * @param  Selectors $selectors    Array of Selector
+		 * @param  string    $templatename Template Name to pull field names / types
+		 * @return string                  Selectors Description e.g. Commit Date before 03/21/2019
+		 */
+		public function describe(Selectors $selectors, $templatename) {
+			$filters = array();
+			$fieldgroup = $this->get_templatefieldgroup($templatename);
+
+			foreach ($selectors as $selector) {
+				if ($fieldgroup->hasField($selector->field)) {
+					$filters[] = $this->describe_field($selector, $fieldgroup->get($selector->field));
+				}
+			}
+			return implode(",", $filters);
+		}
+
+		public function is_filtering(Selectors $selectors, $templatename) {
+			$filters = array();
+			$fieldgroup = $this->get_templatefieldgroup($templatename);
+
+			foreach ($selectors as $selector) {
+				if ($fieldgroup->hasField($selector->field)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		protected function get_templatefieldgroup($templatename) {
+			return $this->wire('templates')->get($templatename)->fieldgroup;
+		}
+
+		protected function describe_field(Selector $selector, Field $field) {
+			$type = strtolower(str_replace($this->prefix_fieldtype, '', $field->type->shortName));
+			$function = "describe_field_$type";
+			return $this->$function($field, $selector);
+		}
+
+		protected function describe_field_datetime(Field $field, Selector $selector) {
+			$description = $field->getLabel() . " ";
+
+			if (sizeof($selector->values()) == 2) {
+				$description .= "between " . implode('and', $selector->values());
+			} else {
+				$date = date('m/d/Y', $selector->value);
+				$description .= $this->describe_operator_datetime($selector->operator())." $date";
+			}
+			return $description;
+		}
+
+		protected function describe_operator_datetime($operator) {
+			switch ($operator) {
+				case '>=':
+					return "on / after";
+					break;
+				case '<=':
+					return "on / before";
+					break;
+				case '>':
+					return 'after';
+					break;
+				case '<':
+					return 'before';
+					break;
+				default:
+					return "on";
+					break;
+			}
+		}
+	}

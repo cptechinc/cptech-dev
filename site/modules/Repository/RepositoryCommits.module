@@ -1,0 +1,156 @@
+<?php
+class RepositoryCommits extends WireData implements Module {
+
+	const TEMPLATE_COMMIT = 'repository-commit';
+	const TEMPLATE_COMMIT_LIST = 'repository-commits';
+	const TEMPLATE_REPOSITORY = 'repository';
+
+	public function __construct() {
+		$this->api = $this->wire('modules')->get('GitHubAPI');
+		$this->template_commit = Repository::TEMPLATE_COMMIT;
+		$this->template_commit_list = Repository::TEMPLATE_COMMIT_LIST;
+		$this->template_repository = Repository::TEMPLATE_REPOSITORY;
+	}
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'GitHub Commit Pages Module',
+			'version' => 101,
+			'summary' => 'Extends Commit Template ("repository-commit") for GitHub Properties',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('Repository'),
+		);
+	}
+
+	public function init() {
+		$this->add_template_commit_list_hooks();
+		$this->add_template_commit_hooks();
+	}
+
+	public function add_template_commit_list_hooks() {
+		$this->addHookProperty("Page(template=$this->template_commit_list)::lastcommit", function($event) {
+			$commits = $event->object;
+			$event->return = $commits->find($this->selector_commit_sequential)->last();
+		});
+
+		$this->addHook("Page(template=$this->template_commit_list)::get_commit_cherrypick_mulitple", function($event) {
+			$commits = $event->object;
+			$firstcommit = $event->arguments(0);
+			$lastcommit = $event->arguments(1);
+			$event->return = $this->get_commit_cherrypick_multiple($firstcommit, $lastcommit);
+		});
+
+		$this->addHook("Page(template=$this->template_commit_list)::import_commits", function($event) {
+			$p = $event->object;
+			$repo = $p->parent;
+			$event->return = $this->import_commits($repo);
+		});
+	}
+
+	public function add_template_commit_hooks() {
+		$this->addHookProperty("Page(template=$this->template_commit)::sha", function($event) {
+			$commit = $event->object;
+			$event->return = $commit->name;
+		});
+
+		$this->addHookProperty("Page(template=$this->template_commit)::shortsha", function($event) {
+			$commit = $event->object;
+			$event->return = substr($commit->name, 0, 7);
+		});
+
+		$this->addHook("Page(template=$this->template_commit)::get_cherrypicksignature", function($event) {
+			$commit = $event->object;
+			$add_sha = $event->arguments(0); // boolean for if we should add commit sha
+			$repo = $commit->parent("template=$this->template_repository");
+			$signature = "$repo->repocode@";
+			$signature .= $add_sha ? $commit->sha : '';
+			$event->return = $signature;
+		});
+
+		// GITHUB REPO HOOKS
+		$this->addHook("Page(template=$this->template_commit)::get_fetchstatement", function($event) {
+			$commit = $event->object;
+			$github = $this->wire('modules')->get('GitHubCommits');
+			$event->return = $this->get_commit_fetchstatement($commit);
+		});
+
+		$this->addHook("Page(template=$this->template_commit)::get_commits_since", function($event) {
+			$commit = $event->object;
+			$sha = $event->arguments(0);
+			$url = $commit->parent("template=$this->template_commit_list")->url;
+			$url = $url . '?after=' . $sha;
+			$event->return = $url;
+		});
+
+		$this->addHook("Page(template=$this->template_commit)::get_commit", function($event) {
+			$commit = $event->object;
+			$repo = $commit->parent("template=$this->template_repository");
+			$event->return = $this->api->commits->get_commit($repo->owner, $repo->name, $commit->name);
+		});
+	}
+
+	public function get_commit_cherrypick_multiple(Page $firstcommit, Page $lastcommit) {
+		$repo = $firstcommit->parent("template=$this->template_repository");
+		$repo_github = $this->api->repos->get_repo($repo->owner, $repo->name);
+		$url = $repo_github['clone_url'];
+		$fetchstring = "git fetch $url master && git cherry-pick $firstcommit->sha^..$lastcommit->sha -e -x";
+		return $fetchstring;
+	}
+
+	public function get_commit_fetchstatement(Page $commit) {
+		$repo = $commit->parent("template=$this->template_repository");
+		$repo_github = $this->api->repos->get_repo($repo->owner, $repo->name);
+		$url = $repo_github['clone_url'];
+		$fetchstring = "git fetch $url master && git cherry-pick $commit->sha -e -x";
+		$fetchstring .= $commit->is_merge ? ' -m 1 ' : '';
+		return $fetchstring;
+	}
+
+	public function create_commit_page(GitHubCommit2 $commit, Page $commitlist) {
+		$regex_merge = '/(merge)/i';
+
+		$p = new Page();
+		$p->of(false);
+		$p->template = $this->wire('modules')->get($this->module_repos)->template_commit;
+		$p->parent = $commitlist;
+		$p->name = $commit->sha;
+		$p->title = $commit->sha;
+		$p->body = $commit->message;
+		$p->is_merge = boolval(preg_match($regex_merge, $commit->message));
+		$p->updated_composer = $this->was_composerupdated($p);
+		$p->date = $commit->date;
+		$p->save();
+		$p->of(true);
+	}
+
+	public function was_composerupdated(Page $commit) {
+		$regex_composer = '/(composer\.json|composer.lock)/i';
+		$repo = $commit->parent("template=$this->template_repository");
+		$commit_github = $this->api->commits->get_commit($repo->owner, $repo->name, $commit->name);
+
+		foreach ($commit_github->files as $file) {
+			if (boolval(preg_match($regex_merge, $file->name))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function import_commits(Page $repo, $branch = 'master') {
+		$github_commits = $this->api->commits->list_commits($repo->owner, $repo->name, $branch);
+
+		$pw_commits = $repo->child("template=$this->template_commit_list");
+
+		foreach ($github_commits as $github_commit) {
+			$sha = $github_commit->sha;
+			// Use $commitpage->numChildren("name=$sha") because now the $commit page will be
+			// a Page with a template of repository-commits
+
+			if (!$pw_commits->numChildren("name=$sha")) {
+				$this->create_commit_page($github_commit, $pw_commits);
+			}
+		}
+	}
+
+}
