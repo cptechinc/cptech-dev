@@ -15,5 +15,4 @@ site/assets
 .vscode
 site/config.php
 /vendor
-!site/modules/GitHubRepositories
-!site/modules/GitHubConnector
+test.php
