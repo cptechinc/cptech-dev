@@ -26,15 +26,10 @@
 				<i class="fa fa-cog" aria-hidden="true"></i> This Commit Updated Composer
 			</div>
 		{% endif %}
-		{% if commit.index == 1 %}
-			<div class="card-header bg-secondary text-white">
-				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commit behind.
-			</div>
-		{% elseif commit.index != 0 %}
-			<div class="card-header bg-secondary text-white">
-				<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.index }} commits behind.
-			</div>
-		{% endif %}
+
+		<div class="card-header bg-secondary text-white">
+			<i class="fa fa-exclamation-circle" aria-hidden="true"></i></i> This commit is {{ commit.parent.numChildren() }} {{ commit.index('sort=-id') }} commits behind.
+		</div>
 
 		<div class="card-body">
 			<nav class="mb-4">
@@ -77,9 +72,9 @@
 							<h3><i class="fa fa-users" aria-hidden="true"></i> Customer Repos that have applied commit</h3>
 							{% set customerarray = customers.getArray()|batch(4, '') %}
 							<div class="row">
-								{% for customercolumn in customerarray %}
+								{% for batch in customerarray %}
 									<div class="col-sm-3">
-										{% for customer in customercolumn if customer.title %}
+										{% for customer in batch if customer.title %}
 											<div class="col">
 												{% include 'repositories/commits/commit-checkbox-form.twig' %}
 												&nbsp; &nbsp;
@@ -91,7 +86,6 @@
 							</div>
 						</div>
 					{% endif %}
-
 					<hr>
 				</div>
 				<div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">

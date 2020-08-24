@@ -25,6 +25,7 @@ class Repository extends WireData implements Module {
 		$this->template_commit = self::TEMPLATE_COMMIT;
 		$this->template_commit_list = self::TEMPLATE_COMMIT_LIST;
 		$this->template_repository = self::TEMPLATE_REPOSITORY;
+		$this->selector_commit_sequential = self::SELECTOR_COMMIT_SEQUENTIAL;
 	}
 
 	public function init() {

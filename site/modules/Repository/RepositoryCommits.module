@@ -107,12 +107,12 @@ class RepositoryCommits extends WireData implements Module {
 		return $fetchstring;
 	}
 
-	public function create_commit_page(GitHubCommit2 $commit, Page $commitlist) {
+	public function create_commit_page(GitHubCommit $commit, Page $commitlist) {
 		$regex_merge = '/(merge)/i';
 
 		$p = new Page();
 		$p->of(false);
-		$p->template = $this->wire('modules')->get($this->module_repos)->template_commit;
+		$p->template = $this->template_commit;
 		$p->parent = $commitlist;
 		$p->name = $commit->sha;
 		$p->title = $commit->sha;
@@ -120,8 +120,9 @@ class RepositoryCommits extends WireData implements Module {
 		$p->is_merge = boolval(preg_match($regex_merge, $commit->message));
 		$p->updated_composer = $this->was_composerupdated($p);
 		$p->date = $commit->date;
-		$p->save();
+		$result = $p->save();
 		$p->of(true);
+		return $result;
 	}
 
 	public function was_composerupdated(Page $commit) {
