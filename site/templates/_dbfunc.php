@@ -2,10 +2,10 @@
 	use Dplus\Base\QueryBuilder;
 	use Dplus\ProcessWire\DplusWire;
 
-    /* =============================================================
-    	LOGIN FUNCTIONS
-    ============================================================= */
-    /**
+	/* =============================================================
+		LOGIN FUNCTIONS
+	============================================================= */
+	/**
 	 * Returns Error Message for Session
 	 * @param  string $sessionID Session Identifier
 	 * @param  bool   $debug     Run in debug? If so, return SQL Query

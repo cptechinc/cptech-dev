@@ -1,0 +1,26 @@
+<?php
+use Github\Client as GithubClient;
+
+include(__DIR__.'/GitHubAPIRepositories.php');
+include(__DIR__.'/GitHubAPICommits.php');
+
+include(__DIR__.'/model/GitHubCommit.php');
+
+class GitHubAPI extends WireData implements Module {
+
+	public function __construct() {
+		$this->client = new GithubClient();
+		$this->repos = new GitHubAPIRepositories();
+		$this->commits = new GitHubAPICommits();
+	}
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'GitHub API',
+			'version' => 101,
+			'summary' => "Makes Requests to GitHubAPI",
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+}

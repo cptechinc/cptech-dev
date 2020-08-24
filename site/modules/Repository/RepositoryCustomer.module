@@ -1,0 +1,102 @@
+<?php
+class RepositoryCustomer extends WireData implements Module {
+	const TEMPLATE_COMMIT = 'repository-commit';
+	const TEMPLATE_COMMIT_LIST = 'repository-commits';
+	const TEMPLATE_REPOSITORY = 'repository';
+	const TEMPLATE_CUSTOMER = 'repository-customer';
+	const TEMPLATE_CUSTOMER_LIST = 'repository-customer-list';
+
+	public function __construct() {
+		$this->api = $this->wire('modules')->get('GitHubAPI');
+		$this->template_commit = Repository::TEMPLATE_COMMIT;
+		$this->template_commit_list = Repository::TEMPLATE_COMMIT_LIST;
+		$this->template_repository = Repository::TEMPLATE_REPOSITORY;
+		$this->template_customer = Repository::TEMPLATE_CUSTOMER;
+		$this->template_customer_list = self::TEMPLATE_CUSTOMER_LIST;
+	}
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'GitHub Repositories Extension',
+			'version' => 101,
+			'summary' => 'Extends Customer Template ("repository-customer") for GitHub Properties',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('Repository'),
+		);
+	}
+
+	public function init() {
+		$this->add_template_customer_hooks();
+	}
+
+	public function add_template_customer_hooks() {
+		$this->addHookProperty("Page(template=$this->template_customer)::lastcommit", function($event) {
+			$customer = $event->object;
+			$event->return = $this->get_lastcommit_customer($customer);
+		});
+
+		$this->addHook("Page(template=$this->template_customer)::has_latestcommit", function($event) {
+			$customer = $event->object;
+			$event->return = $this->has_latestcommit($customer);
+		});
+
+		$this->addHook("Page(template=$this->template_customer)::has_commits", function($event) {
+			$customer = $event->object;
+			$event->return = $this->has_commits_customer($customer);
+		});
+
+		$this->addHook("Page(template=$this->template_customer)::backlogcount", function($event) {
+			$customer = $event->object;
+			$event->return = $this->count_commitbacklog($customer);
+		});
+
+		$this->addHookProperty("Page(template=$this->template_customer)::repocode", function($event) {
+			$customer = $event->object;
+			$repo = $customer->parent("template=$this->template_repository");
+			$event->return = "$repo->owner/$customer->repo";
+		});
+	}
+
+	public function get_lastcommit_customer(Page $customer) {
+		$commits = $customer->parent("template=$this->template_repository")->child("template=$this->template_commit_list");
+		return $commits->find("$this->selector_commit_sequential, commit_customers=$customer->name")->last();
+	}
+
+	public function has_latestcommit(Page $customer) {
+		$repo = $customer->parent("template=$this->template_repository");
+		$last_commit_repo = $repo->lastcommit;
+		$last_commit_customer = $this->get_lastcommit_customer($customer);
+		return $last_commit_repo->id == $last_commit_customer->id;
+	}
+
+	public function has_commits_customer(Page $customer) {
+		$commits = $customer->parent("template=$this->template_repository")->child("template=$this->template_commit_list");
+		return boolval($commits->hasChildren("$this->selector_commit_sequential, commit_customers=$customer->name"));
+	}
+
+	public function count_commitbacklog(Page $customer) {
+		$repo = $customer->parent("template=$this->template_repository");
+		$last_commit_repo = $repo->lastcommit;
+
+		if ($this->has_commits_customer($customer)) {
+			$last_commit_customer = $this->get_lastcommit_customer($customer);
+			return abs($last_commit_repo->index() - $last_commit_customer->index());
+		} else {
+			return abs($repo->child("template=$this->template_commit_list")->hasChildren());
+		}
+	}
+
+	public function add_customer(Page $repository, $custID, $repocode, $name, $note) {
+		$p = new Page();
+		$p->of(false);
+		$p->template = self::TEMPLATE_CUSTOMER;
+		$p->parent = $repository->child("template=$this->template_customer_list");
+		$p->name = $custID;
+		$p->title = $name;
+		$p->code = $custID;
+		$p->repo = $repocode;
+		$p->note = $note;
+		return $p->save();
+	}
+}

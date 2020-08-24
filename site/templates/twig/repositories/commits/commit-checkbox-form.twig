@@ -1,7 +1,7 @@
 <form action="{{ commit.url }}" method="POST" id="{{ commit.name ~ '-' ~ customer.name ~ '-commited' }}">
-    <input type="hidden" name="action" value="save-customer">
-    <input type="hidden" name="custID" value="{{ customer.name }}">
-    <div class="form-check">
-        <input class="form-check-input commit-check" type="checkbox" name="comitted" value="Y" {{ commit.commit_customers.has("name=" ~ customer.name) ? 'checked' : ''  }}>
-    </div>
+	<input type="hidden" name="action" value="save-customer">
+	<input type="hidden" name="custID" value="{{ customer.name }}">
+	<div class="form-check">
+		<input class="form-check-input commit-check" type="checkbox" name="comitted" value="Y" {{ commit.commit_customers.has("name=" ~ customer.name) ? 'checked' : ''  }}>
+	</div>
 </form>

@@ -24,10 +24,11 @@
 	$config->styles->append('//www.fuelcdn.com/fuelux/3.13.0/css/fuelux.min.css');
 	$config->styles->append(get_hashedtemplatefileurl('styles/styles.css'));
 
-	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/libraries.js'));
+
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/jquery.js'));
-	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/popper.js'));
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/bootstrap.min.js'));
+	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/libraries.js'));
+	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/popper.js'));
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/libs/bootstrap-notify.min.js'));
 	$config->scripts->append('//www.fuelcdn.com/fuelux/3.13.0/js/fuelux.min.js');
 	$config->scripts->append(get_hashedtemplatefileurl('scripts/scripts.js'));

@@ -1,0 +1,58 @@
+<?php
+class Repository extends WireData implements Module {
+
+	const TEMPLATE_COMMIT = 'repository-commit';
+	const TEMPLATE_COMMIT_LIST = 'repository-commits';
+	const TEMPLATE_REPOSITORY = 'repository';
+	const TEMPLATE_CUSTOMER = 'repository-customer';
+
+	const SELECTOR_COMMIT_SEQUENTIAL = 'sort=date';
+
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'GitHub Repository PW Module',
+			'version' => 101,
+			'summary' => 'Extends Repository Template ("repository") for GitHub Properties',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array('RepositoryCommits', 'RepositoryCustomer'),
+		);
+	}
+
+	public function __construct() {
+		$this->api = $this->wire('modules')->get('GitHubAPI');
+		$this->template_commit = self::TEMPLATE_COMMIT;
+		$this->template_commit_list = self::TEMPLATE_COMMIT_LIST;
+		$this->template_repository = self::TEMPLATE_REPOSITORY;
+		$this->selector_commit_sequential = self::SELECTOR_COMMIT_SEQUENTIAL;
+	}
+
+	public function init() {
+		$this->addHookProperty("Page(template=$this->template_repository)::lastcommit", function($event) {
+			$repo = $event->object;
+			$event->return = $this->get_repo_lastcommit($repo);
+		});
+
+		$this->addHookProperty("Page(template=$this->template_repository)::repocode", function($event) {
+			$repo = $event->object;
+			$event->return = "$repo->owner/$repo->name";
+		});
+
+		$this->addHookProperty("Page(template=$this->template_repository)::reposignature", function($event) {
+			$repo = $event->object;
+			$event->return = "$repo->owner/$repo->name@";
+		});
+
+		$this->addHook("Page(template=$this->template_repository)::get_githuburl", function($event) {
+			$repo = $event->object;
+			$repo_github = $this->api->repos->get_repo($repo->owner, $repo->name);
+			$event->return = $repo_github['url'];
+		});
+	}
+
+	public function get_repo_lastcommit(Page $repository) {
+		$commits = $repository->child("template=$this->template_commit_list");
+		return $commits->find($this->selector_commit_sequential)->last();
+	}
+}
