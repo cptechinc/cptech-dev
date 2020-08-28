@@ -7,12 +7,11 @@
 				</a>
 			</div>
 		</div>
-		<?php include ('./_ajax-modal.php'); ?>
 		<footer class="hidden-print">
 			<div class="container">
 				<p> Web Development by CPTech &copy; <?= date('Y'); ?> --------- <?= session_id(); ?> --- </p>
 				<p class="d-none d-sm-block d-md-none d-lg-none d-xl-none"> SM </p>
-				<p class="d-none d-md-block d-lg-none d-xl-none"> MD </p> 
+				<p class="d-none d-md-block d-lg-none d-xl-none"> MD </p>
 				<p class="d-none d-lg-block d-xl-none"> LG </p>
 				<p class="d-none d-xl-block"> XL </p>
 			</div>
@@ -20,5 +19,10 @@
 		<?php foreach($config->scripts->unique() as $script) : ?>
 			<script src="<?= $script; ?>"></script>
 		<?php endforeach; ?>
+		<?php if ($page->js) : ?>
+			<script>
+				<?= $page->js; ?>
+			</script>
+		<?php endif; ?>
 	</body>
 </html>

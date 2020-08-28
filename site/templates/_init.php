@@ -57,6 +57,8 @@
 
 	$loader = new Twig_Loader_Filesystem($config->paths->templates.'twig/');
 	$config->twig = new Twig_Environment($loader, [
-	    'cache' => $config->paths->templates.'twig/cache/',
-	    'auto_reload' => true
+		'cache' => $config->paths->templates.'twig/cache/',
+		'auto_reload' => true
 	]);
+	$config->twig->addExtension(new Twig\Extension\DebugExtension());
+	include($config->paths->templates."/twig/util/functions.php");

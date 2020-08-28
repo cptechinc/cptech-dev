@@ -1,0 +1,18 @@
+<div class="pl-5 pr-5 code-div">
+	<div class="row">
+		<div class="col">
+			<div class="form-group">
+				<button type="button" class="btn btn-primary btn-sm pull-right" onclick="selectText('db-{{ dbname }}')">Copy</button>
+			</div>
+		</div>
+	</div>
+
+	<code id="db-{{ dbname }}">
+		{% for table, structure in database.getCreateTables() %}
+			<div id="{{ dbname }}-{{ table }}">
+				{{ structure }}
+			</div>
+			<br>
+		{% endfor %}
+	</code>
+</div>
