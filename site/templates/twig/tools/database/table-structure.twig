@@ -10,7 +10,7 @@
 	<code id="db-{{ dbname }}">
 		{% for table, structure in database.getCreateTables() %}
 			<div id="{{ dbname }}-{{ table }}">
-				{{ structure }}
+				{{ structure }};
 			</div>
 			<br>
 		{% endfor %}
