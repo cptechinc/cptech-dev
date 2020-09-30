@@ -1,0 +1,10 @@
+<h3>Granting Database User Privileges</h3>
+<div id="{{ dbname }}-priv-results" class="mb-3">
+	<code>
+		<p> GRANT SELECT ON {database}.{table} TO {user}@'localhost'; </p>
+		<p> GRANT SELECT ON {database}.{table} TO {user}@'%'; </p>
+	</code>
+</div>
+
+
+{% include 'tools/database/privileges/form.twig' with {'database': database, 'url': page.child('template=tool-dplusdb-privileges').url, 'dbtype': dbname }%}

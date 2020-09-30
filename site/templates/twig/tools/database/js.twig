@@ -4,10 +4,29 @@ $(function() {
 		var button = $(event.relatedTarget);
 		var database = button.data('database');
 		var table    = button.data('table');
-		console.log(database);
-		console.log(table);
 		var structure = $('div#'+database+'-'+table).text();
+
 		modal.find('.modal-title').find('.table-name').text(table)
 		modal.find('code').text(structure);
+	});
+
+	$('body').on('submit', '#create-db-user-form', function(event) {
+		event.preventDefault();
+		var form = $(this);
+		var user = form.find('input[name=user]').val();
+		var password = form.find('input[name=password]').val();
+		$('.password').text(password);
+		$('.user').text(user);
+	});
+
+	$('body').on('submit', '.privileges-form', function(event) {
+		event.preventDefault();
+		var form = $(this);
+		var query = form.serialize();
+		var url = form.attr('action') + '?' + query;
+		var db = form.find('input[name=dbtype]').val();
+		$('#'+db+'-priv-results').loadin(url, function() {
+
+		});
 	});
 });

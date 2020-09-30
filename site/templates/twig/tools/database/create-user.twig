@@ -1,0 +1,18 @@
+<h3>Create User</h3>
+<code>
+	<p>CREATE USER '<span class="user">{username}</span>'@'localhost' IDENTIFIED BY '<span class="password">{password}</span>';</p>
+	<p>CREATE USER '<span class="user">{username}</span>'@'%' IDENTIFIED BY '<span class="password">{password}</span>';</p>
+</code>
+<form action="" id="create-db-user-form">
+	<div class="form-group">
+		<label for="user">User</label>
+		<input type="text" name="user" id="user" class="form-control">
+	</div>
+	<div class="form-group">
+		<label for="password">Password</label>
+		<input type="text" name="password" id="password" class="form-control">
+	</div>
+	<button type="submit" class="btn btn-success">
+		<i class="fa fa-superpowers" aria-hidden="true"></i> Generate
+	</button>
+</form>

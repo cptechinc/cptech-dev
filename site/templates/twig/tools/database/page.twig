@@ -17,6 +17,16 @@
 					Tables
 				</a>
 			</li>
+			<li class="nav-item" role="presentation">
+				<a class="nav-link" id="{{ dbname }}-use-tab" data-toggle="tab" href="#{{ dbname }}-user" role="tab" aria-controls="{{ dbname }}-user" aria-selected="false">
+					Create User
+				</a>
+			</li>
+			<li class="nav-item" role="presentation">
+				<a class="nav-link" id="{{ dbname }}-priv-tab" data-toggle="tab" href="#{{ dbname }}-priv" role="tab" aria-controls="{{ dbname }}-priv" aria-selected="false">
+					Privileges
+				</a>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane fade show active" id="{{ dbname }}-structure" role="tabpanel" aria-labelledby="{{ dbname }}-structure-tab">
@@ -34,7 +44,18 @@
 					{% include 'tools/database/table-list.twig' %}
 				</div>
 			</div>
+			<div class="tab-pane fade" id="{{ dbname }}-user" role="tabpanel" aria-labelledby="{{ dbname }}-user-tab">
+				<div class="mt-2">
+					{% include 'tools/database/create-user.twig' %}
+				</div>
+			</div>
+			<div class="tab-pane fade" id="{{ dbname }}-priv" role="tabpanel" aria-labelledby="{{ dbname }}-priv-tab">
+				<div class="mt-2">
+					{% include 'tools/database/privileges.twig' %}
+				</div>
+			</div>
 		</div>
 	</div>
+	<hr>
 {% endfor %}
 {% include 'tools/database/modal-structure.twig' %}
