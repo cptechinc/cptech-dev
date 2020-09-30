@@ -28,12 +28,12 @@ $(document).ready(function() {
 	});
 
 	$('form[submit-empty="false"]').submit(function () {
-        var $empty_fields = $(this).find(':input').filter(function () {
-            return $(this).val() === '';
-        });
-        $empty_fields.prop('disabled', true);
-        return true;
-    });
+		var $empty_fields = $(this).find(':input').filter(function () {
+			return $(this).val() === '';
+		});
+		$empty_fields.prop('disabled', true);
+		return true;
+	});
 });
 
 function preview_tableformatter(formatterform) {
@@ -65,7 +65,41 @@ $.fn.extend({
 		} else {
 			$.post(options.action, options.formdata).done(function() {callback();});
 		}
-	}
+	},
+	loadin: function(href, callback) {
+		var parent = $(this);
+		parent.html('<div></div>');
+
+		var element = parent.find('div');
+		console.log('loading ' + href + " into " +  parent.returnelementdescription());
+		element.load(href, function() {
+			callback();
+		});
+	},
+	returnelementdescription: function() {
+		var element = $(this);
+		var tag = element[0].tagName.toLowerCase();
+		var classes = '';
+		var id = '';
+		if (element.attr('class')) {
+			classes = element.attr('class').replace(' ', '.');
+		}
+		if (element.attr('id')) {
+			id = element.attr('id');
+		}
+		var string = tag;
+		if (classes) {
+			if (classes.length) {
+				string += '.'+classes;
+			}
+		}
+		if (id) {
+			if (id.length) {
+				string += '#'+id;
+			}
+		}
+		return string;
+	},
 });
 
 function selectText(containerid) {

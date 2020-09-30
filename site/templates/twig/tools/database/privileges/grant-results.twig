@@ -1,0 +1,16 @@
+<div class="pl-5 pr-5 code-div">
+	<div class="row">
+		<div class="col">
+			<div class="form-group">
+				<button type="button" class="btn btn-primary btn-sm pull-right" onclick="selectText('privs')">Copy</button>
+			</div>
+		</div>
+	</div>
+
+	<code id="privs">
+		{% for table in tables %}
+			{{ databases.dplusdata.getGrantUserTable(user, table, db) }}; <br>
+			{{ databases.dplusdata.getGrantUserTable(user, table, db, '%') }}; <br>
+		{% endfor %}
+	</code>
+</div>

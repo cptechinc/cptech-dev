@@ -6,6 +6,8 @@ class DplusDatabase extends Process implements ConfigurableModule {
 	protected $connection_name = 'db_dplusdata';
 	protected $basename        = 'data';
 
+	const GRANT_USER_TABLE = "GRANT SELECT ON {database}.{table} TO {user}@'{host}'";
+
 	const CONFIG_FIELDS = array(
 		'db_name' => array(
 			'name'        => 'db_name',
@@ -96,6 +98,20 @@ class DplusDatabase extends Process implements ConfigurableModule {
 		} else {
 			return $table;
 		}
+	}
+
+	public function getGrantUserTable($user = '', $table = '', $database = '', $host = 'localhost', array $privs = null) {
+		if (empty($privs)) {
+			$privs = array('SELECT');
+		}
+		$statement = self::GRANT_USER_TABLE;
+
+		if ($user && $table && $database) {
+			$replacing = array('{privs}', '{database}', '{table}', '{user}','{host}');
+			$with = array(implode(',', $privs), $database, $table, $user, $host);
+			$statement = str_replace($replacing, $with, $statement);
+		}
+		return $statement;
 	}
 
 	/**

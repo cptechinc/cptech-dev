@@ -1,0 +1,36 @@
+<form action="{{ url }}" class="privileges-form">
+	<input type="hidden" name="dbtype" value="{{ dbtype }}">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="form-group">
+				<label for="user">User</label>
+				<input type="text" name="user" id="user" class="form-control" value="{{ user }}">
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="form-group">
+				<label for="db">Database Name</label>
+				<input type="text" name="db" id="db" class="form-control" value="{{ db }}">
+			</div>
+		</div>
+	</div>
+
+	<h4>Select Tables</h4>
+	<div class="code-div mb-3">
+		<div class="row">
+			{% for tables in database.getTables()|batch(20) %}
+				<div class="col-sm-4">
+					{% for table in tables %}
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" class="custom-control-input" name="tables[]" id="{{ table }}-check" value="{{ table }}">
+							<label class="custom-control-label" for="{{ table }}-check">{{ table }}</label>
+						</div>
+					{% endfor %}
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<button type="submit" class="btn btn-success">
+		<i class="fa fa-superpowers" aria-hidden="true"></i> Generate
+	</button>
+</form>
